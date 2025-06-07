@@ -71,7 +71,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [SlashCommand("get", "입력값을 받습니다.")]
-    public async Task Get(String str, User user) {
-        await RespondAsync(str);   
+    public async Task Get(SocketGuildUser user) {
+        await RespondAsync(user.DisplayName);   
     }
 }
