@@ -72,23 +72,24 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [SlashCommand("get", "입력값을 받습니다.")]
-    public async Task Get(SocketGuildUser user) {
-// ┌────────────────────┬─────────────────────────────────────────────┐
-// │   Slash Command    │            C# (Discord.Net) Type            │
-// ├────────────────────┼─────────────────────────────────────────────┤
-// │ SubCommand         │ N/A (Used to group commands)                │
-// │ SubCommandGroup    │ N/A (Used to group subcommands)             │
-// │ String             │ string                                      │
-// │ Integer            │ int                                         │
-// │ Boolean            │ bool                                        │
-// │ User               │ SocketGuildUser or SocketUser               │
-// │ Role               │ SocketRole                                  │
-// │ Channel            │ SocketChannel                               │
-// │ Mentionable        │ SocketUser, SocketGuildUser, or SocketRole  │
-// │ File               │ IAttachment                                 │
-// └────────────────────┴─────────────────────────────────────────────┘
+    public async Task Get(SocketGuildUser user)
+    {
+        // ┌────────────────────┬─────────────────────────────────────────────┐
+        // │   Slash Command    │            C# (Discord.Net) Type            │
+        // ├────────────────────┼─────────────────────────────────────────────┤
+        // │ SubCommand         │ N/A (Used to group commands)                │
+        // │ SubCommandGroup    │ N/A (Used to group subcommands)             │
+        // │ String             │ string                                      │
+        // │ Integer            │ int                                         │
+        // │ Boolean            │ bool                                        │
+        // │ User               │ SocketGuildUser or SocketUser               │
+        // │ Role               │ SocketRole                                  │
+        // │ Channel            │ SocketChannel                               │
+        // │ Mentionable        │ SocketUser, SocketGuildUser, or SocketRole  │
+        // │ File               │ IAttachment                                 │
+        // └────────────────────┴─────────────────────────────────────────────┘
 
-var embed = new EmbedBuilder()
+        var embed = new EmbedBuilder()
             .WithTitle("사용자자 정보")
             .WithDescription($"{user.Mention}")
             .WithColor(Color.Blue)
@@ -97,5 +98,15 @@ var embed = new EmbedBuilder()
             .Build();
 
         await RespondAsync(embed: embed);
+        
+        var channel = Context.Channel as SocketTextChannel;
+        var messages = await channel.GetMessagesAsync(1).FlattenAsync();
+        var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
+
+        // 메시지가 존재하면 이모지 반응 추가
+        if (botMessage != null)
+        {
+            await botMessage.AddReactionAsync(new Emoji("👋"));
+        }
     }
 }
