@@ -59,6 +59,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
     [SlashCommand("info", "봇 정보를 출력합니다.")]
     public async Task Info() {
+        // 출력값을 임베드박스로 표현현
         var embed = new EmbedBuilder()
             .WithTitle("봇 정보")
             .WithDescription("이것은 예시 봇입니다.")
@@ -69,8 +70,24 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
         await RespondAsync(embed: embed);
     }
+
     [SlashCommand("get", "입력값을 받습니다.")]
     public async Task Get(SocketGuildUser user) {
-        await RespondAsync(user.DisplayName);   
+// ┌────────────────────┬─────────────────────────────────────────────┐
+// │   Slash Command    │            C# (Discord.Net) Type            │
+// ├────────────────────┼─────────────────────────────────────────────┤
+// │ SubCommand         │ N/A (Used to group commands)                │
+// │ SubCommandGroup    │ N/A (Used to group subcommands)             │
+// │ String             │ string                                      │
+// │ Integer            │ int                                         │
+// │ Boolean            │ bool                                        │
+// │ User               │ SocketGuildUser or SocketUser               │
+// │ Role               │ SocketRole                                  │
+// │ Channel            │ SocketChannel                               │
+// │ Mentionable        │ SocketUser, SocketGuildUser, or SocketRole  │
+// │ File               │ IAttachment                                 │
+// └────────────────────┴─────────────────────────────────────────────┘
+
+        await RespondAsync(user.AvatarId);   
     }
 }
