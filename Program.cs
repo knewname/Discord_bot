@@ -90,7 +90,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 var embed = new EmbedBuilder()
             .WithTitle("사용자자 정보")
-            .WithDescription(user.GuildAvatarId)
+            .WithDescription(user.DiscriminatorValue)
             .WithColor(Color.Blue)
             .WithFooter(footer => footer.Text = "Powered by Discord.Net")
             .WithTimestamp(DateTimeOffset.Now)
