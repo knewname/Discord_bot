@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/ksh/bot/Discord_bot/Discord_bot.csproj": {}
+    "C:\\99_study\\git\\Discord_bot\\Discord_bot.csproj": {}
   },
   "projects": {
-    "/home/ksh/bot/Discord_bot/Discord_bot.csproj": {
+    "C:\\99_study\\git\\Discord_bot\\Discord_bot.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ksh/bot/Discord_bot/Discord_bot.csproj",
+        "projectUniqueName": "C:\\99_study\\git\\Discord_bot\\Discord_bot.csproj",
         "projectName": "Discord_bot",
-        "projectPath": "/home/ksh/bot/Discord_bot/Discord_bot.csproj",
-        "packagesPath": "/home/ksh/.nuget/packages/",
-        "outputPath": "/home/ksh/bot/Discord_bot/obj/",
+        "projectPath": "C:\\99_study\\git\\Discord_bot\\Discord_bot.csproj",
+        "packagesPath": "C:\\Users\\ksh\\.nuget\\packages\\",
+        "outputPath": "C:\\99_study\\git\\Discord_bot\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/ksh/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ksh\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -32,7 +32,13 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net7.0": {
@@ -54,12 +60,30 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/ksh/.dotnet/sdk/7.0.410/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     }
