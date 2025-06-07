@@ -63,7 +63,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     {
         await RespondAsync("안녕하세요! 저는 봇입니다.");
     }
-    
+
     [SlashCommand("info", "봇 정보를 출력합니다.")]
     public async Task Info()
     {
@@ -76,5 +76,11 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             .Build();
 
         await RespondAsync(embed: embed);
+    }
+
+    [SlashCommand("get", "입력값을 받습니다.")]
+    public async Task Get(String str)
+    {
+        await RespondAsync(str);   
     }
 }
