@@ -3,13 +3,15 @@ using Discord.WebSocket;
 using Discord.Interactions;
 using System;
 using System.Threading.Tasks;
-class Program {
+class Program
+{
     private DiscordSocketClient _client;
     private InteractionService _interactionService;
 
     public static Task Main(string[] args) => new Program().MainAsync();
 
-    public async Task MainAsync() {
+    public async Task MainAsync()
+    {
         _client = new DiscordSocketClient();
         _interactionService = new InteractionService(_client.Rest); // ✅ 추가
 
@@ -30,38 +32,59 @@ class Program {
     }
 
 
-    private Task Log(LogMessage msg) {
+    private Task Log(LogMessage msg)
+    {
         Console.WriteLine(msg.ToString());
         return Task.CompletedTask;
     }
 
-    private async Task MessageReceivedAsync(SocketMessage message){
+    private async Task MessageReceivedAsync(SocketMessage message)
+    {
         if (message.Content == "!hello")
             await message.Channel.SendMessageAsync("Hello, world!");
     }
 
-   private async Task ReadyAsync() {
+    private async Task ReadyAsync()
+    {
         ulong guildId = 1377521292194091121;
         await _interactionService.AddModulesAsync(System.Reflection.Assembly.GetEntryAssembly(), null);
         await _interactionService.RegisterCommandsToGuildAsync(guildId); // 전역 대신 이걸로 개발 시 빠르게 반영
         Console.WriteLine("슬래시 명령어 등록 완료");
     }
 
-    private async Task HandleInteraction(SocketInteraction interaction){
+    private async Task HandleInteraction(SocketInteraction interaction)
+    {
         var ctx = new SocketInteractionContext(_client, interaction);
         await _interactionService.ExecuteCommandAsync(ctx, null);
+    }
+    
+    private async Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> cacheableMessage, 
+                                        Cacheable<IMessageChannel, ulong> cacheableChannel, 
+                                        SocketReaction reaction) {
+
+        var message = await cacheableMessage.GetOrDownloadAsync();
+        var channel = await cacheableChannel.GetOrDownloadAsync();
+        
+        Console.WriteLine($"{reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 추가했습니다.");
+
+        if (reaction.Emote.Name == "🆗")
+        {
+            await channel.SendMessageAsync("🆗 리액션 감사합니다!");
+        }
     }
 }
 
 public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("hello", "봇이 인사합니다.")]
-    public async Task Hello() {
+    public async Task Hello()
+    {
         await RespondAsync("안녕하세요! 저는 봇입니다.");
     }
 
     [SlashCommand("info", "봇 정보를 출력합니다.")]
-    public async Task Info() {
+    public async Task Info()
+    {
         // 출력값을 임베드박스로 표현현
         var embed = new EmbedBuilder()
             .WithTitle("봇 정보")
@@ -101,7 +124,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             .Build();
 
         await RespondAsync(embed: embed);
-        
+
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
         var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
@@ -112,20 +135,9 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             await botMessage.AddReactionAsync(new Emoji("🆗"));
         }
     }
-}
-
-
-private async Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> cacheableMessage, 
-                                        Cacheable<IMessageChannel, ulong> cacheableChannel, 
-                                        SocketReaction reaction)
-{
-    var message = await cacheableMessage.GetOrDownloadAsync();
-    var channel = await cacheableChannel.GetOrDownloadAsync();
     
-    Console.WriteLine($"{reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 추가했습니다.");
+    
 
-    if (reaction.Emote.Name == "👍")
-    {
-        await channel.SendMessageAsync("👍 리액션 감사합니다!");
-    }
 }
+
+
