@@ -17,6 +17,9 @@ class Program {
         _client.MessageReceived += MessageReceivedAsync;
         _client.Ready += ReadyAsync;
         _client.InteractionCreated += HandleInteraction;
+        _client.ReactionAdded += OnReactionAddedAsync;
+
+
 
         string token = "MTM3NzI3NDMzMzU4MzY0MjcyNw.GDgukg.AeTbdPJeGy8qNkQH93cuw326OujUd2K27toM7Y";
 
@@ -106,7 +109,23 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // 메시지가 존재하면 이모지 반응 추가
         if (botMessage != null)
         {
-            await botMessage.AddReactionAsync(new Emoji("👋"));
+            await botMessage.AddReactionAsync(new Emoji("🆗"));
         }
+    }
+}
+
+
+private async Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> cacheableMessage, 
+                                        Cacheable<IMessageChannel, ulong> cacheableChannel, 
+                                        SocketReaction reaction)
+{
+    var message = await cacheableMessage.GetOrDownloadAsync();
+    var channel = await cacheableChannel.GetOrDownloadAsync();
+    
+    Console.WriteLine($"{reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 추가했습니다.");
+
+    if (reaction.Emote.Name == "👍")
+    {
+        await channel.SendMessageAsync("👍 리액션 감사합니다!");
     }
 }
