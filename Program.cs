@@ -125,13 +125,19 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
                await RespondAsync(embed: embed);*/
 
+        var storage = new GameRegisterStorage();
+
         await RespondAsync("안녕하세요! 저는 봇입니다.");
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
         var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
-        var storage = new GameRegisterStorage();
+
+        
+        // 메시지가 존재하면 이모지 반응 추가
         if (botMessage != null)
         {
+            await botMessage.AddReactionAsync(new Emoji("🆗"));
+            
             await storage.RegisterSchedule(
                 botMessage.Id.ToString(),  // ulong → string
                 date,
@@ -141,11 +147,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 max
             );
         }
-        // 메시지가 존재하면 이모지 반응 추가
-        if (botMessage != null)
-        {
-            await botMessage.AddReactionAsync(new Emoji("🆗"));
-        }
+        
     }
     
     
