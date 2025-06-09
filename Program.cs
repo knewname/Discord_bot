@@ -126,6 +126,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                await RespondAsync(embed: embed);*/
 
         var storage = new GameRegisterStorage();
+
+        await RespondAsync("안녕하세요! 저는 봇입니다.");
         
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
