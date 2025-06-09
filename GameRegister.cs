@@ -32,14 +32,21 @@ public class GameRegisterStorage
         await File.WriteAllTextAsync(_filePath, json);
     }
 
-    public async Task<List<GameRegisterInfo>> LoadAsync()
+   public async Task<List<GameRegisterInfo>> LoadAsync()
     {
         if (!File.Exists(_filePath))
             return new List<GameRegisterInfo>();
 
         var json = await File.ReadAllTextAsync(_filePath);
-        return JsonSerializer.Deserialize<List<GameRegisterInfo>>(json);
+
+        // ✅ 파일이 비어 있는 경우 방어
+        if (string.IsNullOrWhiteSpace(json))
+            return new List<GameRegisterInfo>();
+
+        return JsonSerializer.Deserialize<List<GameRegisterInfo>>(json)
+            ?? new List<GameRegisterInfo>();
     }
+
 
     public async Task RegisterSchedule(string msgId, string date, string time, string game, string regUser, int max)
     {
