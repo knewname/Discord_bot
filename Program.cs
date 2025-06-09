@@ -127,17 +127,17 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
         var storage = new GameRegisterStorage();
 
-        await RespondAsync("안녕하세요! 저는 봇입니다.");
-        var channel = Context.Channel as SocketTextChannel;
-        var messages = await channel.GetMessagesAsync(1).FlattenAsync();
-        var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
+        var response1 = await RespondAsync("안녕하세요! 저는 봇입니다.");
+        var botMessage = await Context.Interaction.GetOriginalResponseAsync();
 
+        var channel = Context.Channel as SocketTextChannel;
+       
         
         // 메시지가 존재하면 이모지 반응 추가
         if (botMessage != null)
         {
             await botMessage.AddReactionAsync(new Emoji("🆗"));
-            
+
             await storage.RegisterSchedule(
                 botMessage.Id.ToString(),  // ulong → string
                 date,

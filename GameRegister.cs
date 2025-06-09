@@ -41,36 +41,40 @@ public class GameRegisterStorage
         return JsonSerializer.Deserialize<List<GameRegisterInfo>>(json);
     }
 
-    public async Task RegisterSchedule
-        (string msgId, string date, string time, string game, string regUser, int max)
+    public async Task RegisterSchedule(string msgId, string date, string time, string game, string regUser, int max)
     {
-    var storage = new GameRegisterStorage("game_register.json");
+        try
+        {
+            var list = await LoadAsync();
 
-    var list = await storage.LoadAsync();
+            if (list.Any(entry => entry.id == msgId))
+            {
+                Console.WriteLine("이미 등록된 메시지 ID입니다. 추가하지 않습니다.");
+                return;
+            }
 
-    // 동일 ID가 이미 있는지 확인
-    if (list.Any(entry => entry.id == msgId))
-    {
-        Console.WriteLine("이미 등록된 메시지 ID입니다. 추가하지 않습니다.");
-        return;
+            var newEntry = new GameRegisterInfo
+            {
+                id = msgId,
+                date = date,
+                time = time,
+                game = game,
+                user = regUser,
+                cur = 1,
+                max = max
+            };
+
+            list.Add(newEntry);
+            await SaveAsync(list);
+
+            Console.WriteLine("저장 완료!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[RegisterSchedule 오류] {ex.Message}");
+        }
     }
 
-    var newEntry = new GameRegisterInfo
-    {
-        id = msgId,
-        date = date,
-        time = time,
-        game = game,
-        user = regUser,
-        cur = 1,
-        max = max
-    };
-
-    list.Add(newEntry);
-    await storage.SaveAsync(list);
-
-    Console.WriteLine("저장 완료!");
-}
 
 
 }
