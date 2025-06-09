@@ -126,12 +126,11 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                await RespondAsync(embed: embed);*/
 
         var storage = new GameRegisterStorage();
-
-        var response1 = await RespondAsync("안녕하세요! 저는 봇입니다.");
-        var botMessage = await Context.Interaction.GetOriginalResponseAsync();
-
+        
         var channel = Context.Channel as SocketTextChannel;
-       
+        var messages = await channel.GetMessagesAsync(1).FlattenAsync();
+        var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
+
         
         // 메시지가 존재하면 이모지 반응 추가
         if (botMessage != null)
