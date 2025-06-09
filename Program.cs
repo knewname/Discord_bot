@@ -98,7 +98,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [SlashCommand("get", "입력값을 받습니다.")]
-    public async Task Get(SocketGuildUser user)
+    public async Task Get(string date, string time, string game, int max)
     {
         // ┌────────────────────┬─────────────────────────────────────────────┐
         // │   Slash Command    │            C# (Discord.Net) Type            │
@@ -115,20 +115,32 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // │ File               │ IAttachment                                 │
         // └────────────────────┴─────────────────────────────────────────────┘
 
-        var embed = new EmbedBuilder()
-            .WithTitle("사용자자 정보")
-            .WithDescription($"{user.Mention}")
-            .WithColor(Color.Blue)
-            .WithFooter(footer => footer.Text = "Powered by Discord.Net")
-            .WithTimestamp(DateTimeOffset.Now)
-            .Build();
+        /*       var embed = new EmbedBuilder()
+                   .WithTitle("사용자자 정보")
+                   .WithDescription($"{user.Mention}")
+                   .WithColor(Color.Blue)
+                   .WithFooter(footer => footer.Text = "Powered by Discord.Net")
+                   .WithTimestamp(DateTimeOffset.Now)
+                   .Build();
 
-        await RespondAsync(embed: embed);
+               await RespondAsync(embed: embed);*/
 
+        await RespondAsync("안녕하세요! 저는 봇입니다.");
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
         var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
-
+        var storage = new GameRegisterStorage();
+        if (botMessage != null)
+        {
+            await storage.RegisterSchedule(
+                botMessage.Id.ToString(),  // ulong → string
+                date,
+                time,
+                game,
+                "",     // 유저 정보가 없을 경우 빈 문자열
+                max
+            );
+        }
         // 메시지가 존재하면 이모지 반응 추가
         if (botMessage != null)
         {
