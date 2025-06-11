@@ -156,7 +156,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                   .Build();
 
             // msg 수정정
-            await msg.ModifyAsync(m => { m.Embed = embed; });
+            await botMessage.ModifyAsync(m => { m.Embed = embed; });
 
             await storage.RegisterSchedule(
                 messageId.ToString(),  // ulong → string
