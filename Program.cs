@@ -145,7 +145,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 date,
                 time,
                 game,
-                user.GlobalName,     // 유저 정보가 없을 경우 빈 문자열
+                user.Username,     // 유저 정보가 없을 경우 빈 문자열
                 max
             );
         }
