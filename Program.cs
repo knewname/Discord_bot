@@ -135,18 +135,25 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
         if (botMessage != null)
         {
-             // 메시지가 존재하면 이모지 반응 추가
+            // 메시지가 존재하면 이모지 반응 추가
             await botMessage.AddReactionAsync(new Emoji("🆗"));
 
-
+            ulong messageId = botMessage.Id;
+            var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
+            await msg.ModifyAsync(m => {
+                m.Content = $"ID : {messageId}\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 {user.Username}";
+                m.Embed = embed;
+            });
             await storage.RegisterSchedule(
-                botMessage.Id.ToString(),  // ulong → string
+                messageId.ToString(),  // ulong → string
                 date,
                 time,
                 game,
                 user.Username,     // 유저 정보가 없을 경우 빈 문자열
                 max
             );
+            
+            
         }
 
 
