@@ -69,7 +69,7 @@ class Program
 
         if (reaction.Emote.Name == "🆗")
         {
-            await channel.SendMessageAsync($"<@!{reaction.UserId}> 님이🆗 리액션 감사합니다!");
+            await channel.SendMessageAsync($"\n<@!{reaction.UserId}> 님이🆗 리액션 감사합니다!");
         }
     }
 }
