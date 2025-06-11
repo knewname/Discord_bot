@@ -120,16 +120,16 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
         var user = Context.User;
+
+        // 메세지 ID를 미리 받기 위한 선 입력메세지 
         var embed = new EmbedBuilder()
                   .WithTitle($"{game}")
                   .WithDescription($"모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 {user.Username}")
                   .WithColor(Color.Blue)
-                  .WithFooter(footer => footer.Text = "Powered by Discord.Net")
-                  .WithTimestamp(DateTimeOffset.Now)
                   .Build();
-
         await RespondAsync(embed: embed);
 
+        // 메세지 ID 저장장
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
         var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
@@ -140,10 +140,19 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
             ulong messageId = botMessage.Id;
             var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
-            await msg.ModifyAsync(m => {
-                m.Content = $"ID : {messageId}\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 {user.Username}";
-                m.Embed = embed;
-            });
+            
+            // embed 포멧 실제 포멧으로 수정정
+            embed = new EmbedBuilder()
+                  .WithTitle($"{game}")
+                  .WithDescription($"ID : {messageId}\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
+                  .WithColor(Color.Blue)
+                  .WithFooter(footer => footer.Text = "Powered by Discord.Net")
+                  .WithTimestamp(DateTimeOffset.Now)
+                  .Build();
+
+            // msg 수정정
+            await msg.ModifyAsync(m => { m.Embed = embed; });
+
             await storage.RegisterSchedule(
                 messageId.ToString(),  // ulong → string
                 date,
