@@ -124,7 +124,6 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // 메세지 ID를 미리 받기 위한 선 입력메세지 
         var embed = new EmbedBuilder()
                   .WithTitle($"{game}")
-                  .WithDescription($"모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 {user.Username}")
                   .WithColor(Color.Blue)
                   .Build();
         await RespondAsync(embed: embed);
