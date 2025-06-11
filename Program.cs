@@ -138,12 +138,14 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         {
             await botMessage.AddReactionAsync(new Emoji("🆗"));
 
+            var user = botMessage.Author;
+
             await storage.RegisterSchedule(
                 botMessage.Id.ToString(),  // ulong → string
                 date,
                 time,
                 game,
-                "",     // 유저 정보가 없을 경우 빈 문자열
+                user.GlobalName,     // 유저 정보가 없을 경우 빈 문자열
                 max
             );
         }
