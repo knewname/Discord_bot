@@ -128,9 +128,6 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 .Build();
         await RespondAsync(embed: embed);
 
-        
-        var asd = await Context.Interaction.GetOriginalResponseAsync(); // IUserMessage 반환
-        Console.Write($"{asd.Id}\n");
         // 메세지 ID 저장
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
