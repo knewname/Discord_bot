@@ -129,12 +129,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         await RespondAsync(embed: embed);
 
         
-        // Followup 메시지로 전송하고 메시지 객체 직접 받음
-        var asd = await FollowupAsync(embed: embed);
-
-        // 이모지 반응 추가
-        await asd.AddReactionAsync(new Emoji("🆗"));
-
+        var asd = await Context.Interaction.FollowupAsync(embed: embed);
+        Console.Write($"{asd.Id}\n");
         // 메세지 ID 저장
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
