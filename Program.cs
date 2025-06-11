@@ -128,24 +128,21 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 .WithDescription($"ID : [잠시 후 결정됨]\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
                 .WithColor(Color.Blue)
                 .Build();
-
         await RespondAsync(embed: embed);
-        var test = await FollowupAsync(embed: embed);
-        Console.Write(test.Id);
 
         //await DeferAsync(); // 슬래시 명령어 응답 딜레이 방지
         //var botMessage = await Context.Interaction.GetOriginalResponseAsync();
 
         // 메세지 ID 저장장
-        //var channel = Context.Channel as SocketTextChannel;
-        //var messages = await channel.GetMessagesAsync(1).FlattenAsync();
-        //var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
-        if (test != null)
+        var channel = Context.Channel as SocketTextChannel;
+        var messages = await channel.GetMessagesAsync(1).FlattenAsync();
+        var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
+        if (botMessage != null)
         {
             // 메시지가 존재하면 이모지 반응 추가
-            await test.AddReactionAsync(new Emoji("🆗"));
+            await botMessage.AddReactionAsync(new Emoji("🆗"));
 
-            ulong messageId = test.Id;
+            ulong messageId = botMessage.Id;
             var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
             
             // embed 포멧 실제 포멧으로 수정정
