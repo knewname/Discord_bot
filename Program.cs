@@ -122,8 +122,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // 메시지가 존재하면 이모지 반응 추가
 
         var embed = new EmbedBuilder()
-                  .WithTitle("사용자자 정보")
-                  .WithDescription($"게임명 : {game}\n모집인원수 : {max}\n시간 : {time}")
+                  .WithTitle($"{game}")
+                  .WithDescription($"모집인원수 : {max}\n시간 : {date} {time}")
                   .WithColor(Color.Blue)
                   .WithFooter(footer => footer.Text = "Powered by Discord.Net")
                   .WithTimestamp(DateTimeOffset.Now)
