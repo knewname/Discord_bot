@@ -69,7 +69,7 @@ class Program
 
         if (reaction.Emote.Name == "🆗")
         {
-            await channel.SendMessageAsync($"sad<@!{reaction.UserId}> 님이🆗 리액션 감사합니다!");
+            await channel.SendMessageAsync($"<@!{reaction.UserId}> 님이🆗 리액션 감사합니다!");
         }
     }
 }
@@ -129,7 +129,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         await RespondAsync(embed: embed);
 
         
-        var asd = await Context.Interaction.FollowupAsync(embed: embed);
+        var asd = await Context.Interaction.GetOriginalResponseAsync(); // IUserMessage 반환
         Console.Write($"{asd.Id}\n");
         // 메세지 ID 저장
         var channel = Context.Channel as SocketTextChannel;
