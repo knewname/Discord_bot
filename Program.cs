@@ -119,11 +119,10 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         var storage = new GameRegisterStorage();
 
 
-        // 메시지가 존재하면 이모지 반응 추가
-
+        var user = Context.User;
         var embed = new EmbedBuilder()
                   .WithTitle($"{game}")
-                  .WithDescription($"모집인원수 : {max}\n시간 : {date} {time}")
+                  .WithDescription($"모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 {user.Username}")
                   .WithColor(Color.Blue)
                   .WithFooter(footer => footer.Text = "Powered by Discord.Net")
                   .WithTimestamp(DateTimeOffset.Now)
@@ -136,9 +135,9 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
         if (botMessage != null)
         {
+             // 메시지가 존재하면 이모지 반응 추가
             await botMessage.AddReactionAsync(new Emoji("🆗"));
 
-            var user = Context.User;
 
             await storage.RegisterSchedule(
                 botMessage.Id.ToString(),  // ulong → string

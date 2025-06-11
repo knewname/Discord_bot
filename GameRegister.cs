@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -28,7 +29,13 @@ public class GameRegisterStorage
 
     public async Task SaveAsync(List<GameRegisterInfo> list)
     {
-        var json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
+        var json = JsonSerializer.Serialize(list, options);
         await File.WriteAllTextAsync(_filePath, json);
     }
 
