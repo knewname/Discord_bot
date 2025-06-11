@@ -138,7 +138,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         {
             await botMessage.AddReactionAsync(new Emoji("🆗"));
 
-            var user = botMessage.Author;
+            var user = Context.User;
 
             await storage.RegisterSchedule(
                 botMessage.Id.ToString(),  // ulong → string
