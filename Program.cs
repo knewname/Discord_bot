@@ -128,7 +128,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 .WithColor(Color.Blue)
                 .Build();
 
-        var test = FollowupAsync(embed: embed);
+        var test = await FollowupAsync(embed: embed);
         await RespondAsync(embed: embed);
 
         // 메세지 ID 저장
