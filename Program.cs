@@ -122,12 +122,13 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         var user = Context.User;
 
         // 메세지 ID를 미리 받기 위한 선 입력메세지 
-        var embed = new EmbedBuilder()
-                  .WithTitle($"{game}")
-                  .WithColor(Color.Blue)
-                  .Build();
-        await RespondAsync(embed: embed);
+       var embed = new EmbedBuilder()
+            .WithTitle($"{game}")
+            .WithDescription($"ID : [잠시 후 결정됨]\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
+            .WithColor(Color.Blue)
+            .Build();
 
+        var msg = await FollowupAsync(embed: embed);
         // 메세지 ID 저장장
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
@@ -138,7 +139,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             await botMessage.AddReactionAsync(new Emoji("🆗"));
 
             ulong messageId = botMessage.Id;
-            var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
+            //var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
             
             // embed 포멧 실제 포멧으로 수정정
             embed = new EmbedBuilder()
