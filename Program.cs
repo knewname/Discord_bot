@@ -115,26 +115,25 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // │ File               │ IAttachment                                 │
         // └────────────────────┴─────────────────────────────────────────────┘
 
-        /*       var embed = new EmbedBuilder()
-                   .WithTitle("사용자자 정보")
-                   .WithDescription($"{user.Mention}")
-                   .WithColor(Color.Blue)
-                   .WithFooter(footer => footer.Text = "Powered by Discord.Net")
-                   .WithTimestamp(DateTimeOffset.Now)
-                   .Build();
-
-               await RespondAsync(embed: embed);*/
-
+        /* $"{user.Mention}" > 유저 멘션*/
         var storage = new GameRegisterStorage();
 
-        await RespondAsync("안녕하세요! 저는 봇입니다.");
-        
+
+        // 메시지가 존재하면 이모지 반응 추가
+
+        var embed = new EmbedBuilder()
+                  .WithTitle("사용자자 정보")
+                  .WithDescription($"게임명 : {game}\n모집인원수 : {max}\n시간 : {time}")
+                  .WithColor(Color.Blue)
+                  .WithFooter(footer => footer.Text = "Powered by Discord.Net")
+                  .WithTimestamp(DateTimeOffset.Now)
+                  .Build();
+
+        await RespondAsync(embed: embed);
+
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
         var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
-
-        
-        // 메시지가 존재하면 이모지 반응 추가
         if (botMessage != null)
         {
             await botMessage.AddReactionAsync(new Emoji("🆗"));
@@ -148,7 +147,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 max
             );
         }
-        
+
+
     }
     
     
