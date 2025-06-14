@@ -76,6 +76,34 @@ class Program
             GameRegisterInfo info = await gameRegister.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경경
             if (info != null)
+                await EditGameRegisterMessage(message, info);
+
+            else if (info == null && !user.IsBot)
+            {
+                await channel.SendMessageAsync($"{user} 님은 참여하실수 없습니다.");
+                // 해당 리액션 제거
+                await message.RemoveReactionAsync(reaction.Emote, user);
+            }
+        }
+    }
+
+    private async Task OnReactionRemovedAsync(Cacheable<IUserMessage, ulong> cacheableMessage,
+                                          Cacheable<IMessageChannel, ulong> cacheableChannel,
+                                          SocketReaction reaction)
+    {
+        var message = await cacheableMessage.GetOrDownloadAsync();
+        var channel = await cacheableChannel.GetOrDownloadAsync();
+        var user = await channel.GetUserAsync(reaction.UserId);
+        GameRegisterStorage gameRegister = new GameRegisterStorage();
+
+        //Console.WriteLine($"❌ {reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 제거했습니다.");
+
+        // 예시: 특정 이모지 감지
+        if (reaction.Emote.Name == "🆗")
+        {
+            GameRegisterInfo info = await gameRegister.RemoveUser(reaction.MessageId, reaction.UserId);
+            // 정상적으로 추가 완료시 기존 메세지 변경
+            if (info != null)
             {
                 string users = "";
                 foreach (ulong userId in info.users)
@@ -83,16 +111,8 @@ class Program
                     SocketUser userMention = _client.GetUser(userId);
                     users += $"{userMention.Mention} ";
                 }
-                // 저장적으로 json에서 저장된 데이터 기반으로 메세지 수정 
-                Embed embed = new EmbedBuilder()
-                    .WithTitle($"{info.game}")
-                    .WithDescription($"ID : {info.id}\n모집인원수 : {info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
-                    .WithColor(Color.Blue)
-                    .WithFooter(footer => footer.Text = "Powered by Discord.Net")
-                    .WithTimestamp(DateTimeOffset.Now)
-                    .Build();
 
-                await message.ModifyAsync(m => { m.Embed = embed; });
+                await EditGameRegisterMessage(message, info);
 
             }
             else if (info == null && !user.IsBot)
@@ -103,22 +123,29 @@ class Program
             }
         }
     }
-    
-    private async Task OnReactionRemovedAsync(Cacheable<IUserMessage, ulong> cacheableMessage,
-                                          Cacheable<IMessageChannel, ulong> cacheableChannel,
-                                          SocketReaction reaction)
+
+    // json에서 저장된 데이터 기반으로 메세지 수정 
+    public async Task EditGameRegisterMessage(IUserMessage msg, GameRegisterInfo info)
     {
-        var message = await cacheableMessage.GetOrDownloadAsync();
-        var channel = await cacheableChannel.GetOrDownloadAsync();
 
-        Console.WriteLine($"❌ {reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 제거했습니다.");
-
-        // 예시: 특정 이모지 감지
-        if (reaction.Emote.Name == "🆗")
+        string users = "";
+        foreach (ulong userId in info.users)
         {
-            // 유저 리스트에서 제거하거나 상태 업데이트 등
+            SocketUser userMention = _client.GetUser(userId);
+            users += $"{userMention.Mention} ";
         }
-}
+
+        Embed embed = new EmbedBuilder()
+                    .WithTitle($"{info.game}")
+                    .WithDescription($"ID : {info.id}\n모집인원수 : {info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
+                    .WithColor(Color.Blue)
+                    .WithFooter(footer => footer.Text = "Powered by Discord.Net")
+                    .WithTimestamp(DateTimeOffset.Now)
+                    .Build();
+
+        await msg.ModifyAsync(m => { m.Embed = embed; });
+
+    }
 
 }
 

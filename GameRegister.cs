@@ -62,29 +62,56 @@ public class GameRegisterStorage
 
 
     // 인원 추가시 기존 json 파일 수정
-    public async Task<GameRegisterInfo> AddUser(ulong msgId, ulong userName)
+    public async Task<GameRegisterInfo> AddUser(ulong msgId, ulong userId)
+    {
+        var list = await LoadAsync();
+
+        GameRegisterInfo gameRegister = await SearchGameSchedule(msgId);
+        
+        // 이미 참가중일 때
+        if (gameRegister.users.Contains(userId))
+            return null;
+
+        // 이미 인원수가 가장 찼을 때      
+        if (gameRegister.cur >= gameRegister.max)
+            return null;
+
+        gameRegister.users.Add(userId);
+        gameRegister.cur++;
+
+        await SaveAsync(list);
+        return gameRegister;
+        
+    }
+
+public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
+    {
+        var list = await LoadAsync();
+
+        GameRegisterInfo gameRegister = await SearchGameSchedule(msgId);
+
+        // users에 있다면 유저 삭제제
+        if (gameRegister.users.Contains(userId))
+        {
+            gameRegister.users.Remove(userId);
+            gameRegister.cur--;
+        }
+        // 수정된 내용 수정 후 저장
+        await SaveAsync(list);
+
+        return gameRegister;
+        
+    }
+
+
+
+    public async Task<GameRegisterInfo> SearchGameSchedule(ulong msgId)
     {
         var list = await LoadAsync();
 
         foreach (var gameRegister in list)
-        {
             if (gameRegister.id == msgId)
-            {
-                // 이미 참가중일 때
-                if (gameRegister.users.Contains(userName))
-                    return null;
-
-                // 이미 인원수가 가장 찼을 때      
-                if (gameRegister.cur >= gameRegister.max)
-                    return null;
-
-                gameRegister.users.Add(userName);
-                gameRegister.cur++;
-
-                await SaveAsync(list);
                 return gameRegister;
-            }
-        }
 
         return null;
     }
