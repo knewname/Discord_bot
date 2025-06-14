@@ -70,7 +70,7 @@ class Program
 
         if (reaction.Emote.Name == "🆗")
         {
-            bool chk = await gameRegister.AddUser(reaction.MessageId.ToString(), reaction.UserId.ToString());
+            bool chk = await gameRegister.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경경
             if (chk)
             {
@@ -78,10 +78,10 @@ class Program
             }
             else
             {
-                await channel.SendMessageAsync("참여하실수 없습니다.");
-                var emoji = new Emoji("✅");
-                await message.RemoveReactionAsync(emoji, reaction.UserId);
-                
+                await channel.SendMessageAsync("{reaction.UserId} 님은 참여하실수 없습니다.");
+                // 해당 리액션 제거
+                Console.WriteLine($"{reaction.Emote} 이모지지 {reaction.UserId} 유저.");
+                await message.RemoveReactionAsync(reaction.Emote, reaction.UserId);
             }
         }
     }
@@ -92,7 +92,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("hello", "봇이 인사합니다.")]
     public async Task Hello()
     {
-        await RespondAsync("안녕하세요! 저는 봇입니다.");
+        await RespondAsync("부르셨나요?");
     }
 
     [SlashCommand("info", "봇 정보를 출력합니다.")]
@@ -166,11 +166,11 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             await msg.ModifyAsync(m => { m.Embed = embed; });
 
             await storage.RegisterSchedule(
-                messageId.ToString(),  // ulong → string
+                messageId,  // ulong → string
                 date,
                 time,
                 game,
-                user.Id.ToString(),     
+                user.Id,     
                 max
             );
             
