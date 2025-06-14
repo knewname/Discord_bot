@@ -64,11 +64,13 @@ class Program
 
         var message = await cacheableMessage.GetOrDownloadAsync();
         var channel = await cacheableChannel.GetOrDownloadAsync();
+        GameRegisterStorage gameRegister = new GameRegisterStorage();
         
-        Console.WriteLine($"{reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 추가했습니다.");
+        //Console.WriteLine($"{reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 추가했습니다.");
 
         if (reaction.Emote.Name == "🆗")
         {
+            await gameRegister.AddUser(reaction.MessageId.ToString(), reaction.UserId.ToString());
             await channel.SendMessageAsync($"<@!{reaction.UserId}> 님이🆗 리액션 감사합니다!");
         }
     }
@@ -143,7 +145,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             // embed 포멧 실제 포멧으로 수정정
             embed = new EmbedBuilder()
                   .WithTitle($"{game}")
-                  .WithDescription($"ID : {messageId}\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
+                  .WithDescription($"ID : {messageId}\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 : {user.Mention}")
                   .WithColor(Color.Blue)
                   .WithFooter(footer => footer.Text = "Powered by Discord.Net")
                   .WithTimestamp(DateTimeOffset.Now)
@@ -157,7 +159,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 date,
                 time,
                 game,
-                user.Username,     // 유저 정보가 없을 경우 빈 문자열
+                user.Id.ToString(),     
                 max
             );
             
