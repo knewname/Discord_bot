@@ -20,6 +20,8 @@ class Program
         _client.Ready += ReadyAsync;
         _client.InteractionCreated += HandleInteraction;
         _client.ReactionAdded += OnReactionAddedAsync;
+        _client.ReactionRemoved += OnReactionRemovedAsync;
+
 
 
 
