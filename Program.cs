@@ -57,17 +57,17 @@ class Program
         var ctx = new SocketInteractionContext(_client, interaction);
         await _interactionService.ExecuteCommandAsync(ctx, null);
     }
-    
-    private async Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> cacheableMessage, 
-                                        Cacheable<IMessageChannel, ulong> cacheableChannel, 
-                                        SocketReaction reaction) {
+
+    private async Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> cacheableMessage,
+                                        Cacheable<IMessageChannel, ulong> cacheableChannel,
+                                        SocketReaction reaction)
+    {
 
         var message = await cacheableMessage.GetOrDownloadAsync();
         var channel = await cacheableChannel.GetOrDownloadAsync();
-        var user = await channel.GetUserAsync(reaction.UserId);  // DiscordSocketClient 필요
+        var user = await channel.GetUserAsync(reaction.UserId);
         GameRegisterStorage gameRegister = new GameRegisterStorage();
-        
-        //Console.WriteLine($"{reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 추가했습니다.");
+
 
         if (reaction.Emote.Name == "🆗")
         {
@@ -89,7 +89,7 @@ class Program
                     .WithFooter(footer => footer.Text = "Powered by Discord.Net")
                     .WithTimestamp(DateTimeOffset.Now)
                     .Build();
-                    
+
                 await message.ModifyAsync(m => { m.Embed = embed; });
 
             }
@@ -97,11 +97,27 @@ class Program
             {
                 await channel.SendMessageAsync($"{user} 님은 참여하실수 없습니다.");
                 // 해당 리액션 제거
-                Console.WriteLine($"{reaction.Emote} 이모지지 {user} 유저.");
                 await message.RemoveReactionAsync(reaction.Emote, user);
             }
         }
     }
+    
+    private async Task OnReactionRemovedAsync(Cacheable<IUserMessage, ulong> cacheableMessage,
+                                          Cacheable<IMessageChannel, ulong> cacheableChannel,
+                                          SocketReaction reaction)
+    {
+        var message = await cacheableMessage.GetOrDownloadAsync();
+        var channel = await cacheableChannel.GetOrDownloadAsync();
+
+        Console.WriteLine($"❌ {reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 제거했습니다.");
+
+        // 예시: 특정 이모지 감지
+        if (reaction.Emote.Name == "🆗")
+        {
+            // 유저 리스트에서 제거하거나 상태 업데이트 등
+        }
+}
+
 }
 
 public class SlashModule : InteractionModuleBase<SocketInteractionContext>
@@ -127,7 +143,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         await RespondAsync(embed: embed);
     }
 
-    [SlashCommand("get", "입력값을 받습니다.")]
+    [SlashCommand("party", "파티원을 모집합니다.")]
     public async Task Get(string date, string time, string game, int max)
     {
         // ┌────────────────────┬─────────────────────────────────────────────┐
