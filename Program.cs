@@ -70,8 +70,19 @@ class Program
 
         if (reaction.Emote.Name == "🆗")
         {
-            await gameRegister.AddUser(reaction.MessageId.ToString(), reaction.UserId.ToString());
-            await channel.SendMessageAsync($"<@!{reaction.UserId}> 님이🆗 리액션 감사합니다!");
+            bool chk = await gameRegister.AddUser(reaction.MessageId.ToString(), reaction.UserId.ToString());
+            // 정상적으로 추가 완료시 기존 메세지 변경경
+            if (chk)
+            {
+
+            }
+            else
+            {
+                await channel.SendMessageAsync("참여하실수 없습니다.");
+                var emoji = new Emoji("✅");
+                await message.RemoveReactionAsync(emoji, reaction.UserId);
+                
+            }
         }
     }
 }
