@@ -8,6 +8,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Interactions;
 using System.Collections;
+using Microsoft.VisualBasic;
 
 public class GameRegisterInfo
 {
@@ -66,7 +67,7 @@ public class GameRegisterStorage
     {
         var list = await LoadAsync();
 
-        GameRegisterInfo gameRegister = await SearchGameSchedule(msgId);
+        GameRegisterInfo gameRegister = await SearchGameSchedule(list, msgId);
         
         // 이미 참가중일 때
         if (gameRegister.users.Contains(userId))
@@ -80,7 +81,7 @@ public class GameRegisterStorage
         gameRegister.cur++;
 
         await SaveAsync(list);
-        
+
         return gameRegister;
         
     }
@@ -89,7 +90,7 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     {
         var list = await LoadAsync();
 
-        GameRegisterInfo gameRegister = await SearchGameSchedule(msgId);
+        GameRegisterInfo gameRegister = await SearchGameSchedule(list, msgId);
 
         // users에 있다면 유저 삭제
         if (gameRegister.users.Contains(userId))
@@ -106,9 +107,8 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
 
 
 
-    public async Task<GameRegisterInfo> SearchGameSchedule(ulong msgId)
+    public async Task<GameRegisterInfo> SearchGameSchedule(List<GameRegisterInfo> list, ulong msgId)
     {
-        var list = await LoadAsync();
 
         foreach (var gameRegister in list)
             if (gameRegister.id == msgId)
