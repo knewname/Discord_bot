@@ -64,6 +64,7 @@ class Program
 
         var message = await cacheableMessage.GetOrDownloadAsync();
         var channel = await cacheableChannel.GetOrDownloadAsync();
+        var user = await channel.GetUserAsync(reaction.UserId);  // DiscordSocketClient 필요
         GameRegisterStorage gameRegister = new GameRegisterStorage();
         
         //Console.WriteLine($"{reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 추가했습니다.");
@@ -76,12 +77,12 @@ class Program
             {
 
             }
-            else
+            else if(!chk && !user.IsBot)
             {
-                await channel.SendMessageAsync("{reaction.UserId} 님은 참여하실수 없습니다.");
+                await channel.SendMessageAsync($"{user} 님은 참여하실수 없습니다.");
                 // 해당 리액션 제거
-                Console.WriteLine($"{reaction.Emote} 이모지지 {reaction.UserId} 유저.");
-                await message.RemoveReactionAsync(reaction.Emote, reaction.UserId);
+                Console.WriteLine($"{reaction.Emote} 이모지지 {user} 유저.");
+                await message.RemoveReactionAsync(reaction.Emote, user);
             }
         }
     }
