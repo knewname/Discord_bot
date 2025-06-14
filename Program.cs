@@ -84,7 +84,7 @@ class Program
                 // 저장적으로 json에서 저장된 데이터 기반으로 메세지 수정 
                 Embed embed = new EmbedBuilder()
                     .WithTitle($"{info.game}")
-                    .WithDescription($"ID : {info.messageId}\n모집인원수 : {info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
+                    .WithDescription($"ID : {info.id}\n모집인원수 : {info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
                     .WithColor(Color.Blue)
                     .WithFooter(footer => footer.Text = "Powered by Discord.Net")
                     .WithTimestamp(DateTimeOffset.Now)
