@@ -62,7 +62,7 @@ public class GameRegisterStorage
 
 
     // 인원 추가시 기존 json 파일 수정
-    public async Task<bool> AddUser(ulong msgId, ulong userName)
+    public async Task<GameRegisterInfo> AddUser(ulong msgId, ulong userName)
     {
         var list = await LoadAsync();
 
@@ -70,21 +70,23 @@ public class GameRegisterStorage
         {
             if (gameRegister.id == msgId)
             {
+                // 이미 참가중일 때
                 if (gameRegister.users.Contains(userName))
-                    return false;
+                    return null;
 
+                // 이미 인원수가 가장 찼을 때      
                 if (gameRegister.cur >= gameRegister.max)
-                    return false;
+                    return null;
 
                 gameRegister.users.Add(userName);
                 gameRegister.cur++;
 
                 await SaveAsync(list);
-                return true;
+                return gameRegister;
             }
         }
 
-        return false;
+        return null;
     }
 
 
