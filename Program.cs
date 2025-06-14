@@ -71,13 +71,29 @@ class Program
 
         if (reaction.Emote.Name == "🆗")
         {
-            bool chk = await gameRegister.AddUser(reaction.MessageId, reaction.UserId);
+            GameRegisterInfo info = await gameRegister.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경경
-            if (chk)
+            if (info != null)
             {
+                string users = "";
+                foreach (ulong userId in info.users)
+                {
+                    SocketUser userMention = _client.GetUser(userId);
+                    users += $"{user.Mention} ";
+                }
+                // 저장적으로 json에서 저장된 데이터 기반으로 메세지 수정 
+                Embed embed = new EmbedBuilder()
+                    .WithTitle($"{info.game}")
+                    .WithDescription($"ID : {info.messageId}\n모집인원수 : {info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
+                    .WithColor(Color.Blue)
+                    .WithFooter(footer => footer.Text = "Powered by Discord.Net")
+                    .WithTimestamp(DateTimeOffset.Now)
+                    .Build();
+                    
+                await message.ModifyAsync(m => { m.Embed = embed; });
 
             }
-            else if(!chk && !user.IsBot)
+            else if (info == null && !user.IsBot)
             {
                 await channel.SendMessageAsync($"{user} 님은 참여하실수 없습니다.");
                 // 해당 리액션 제거
