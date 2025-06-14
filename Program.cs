@@ -80,7 +80,7 @@ class Program
                 {
                     SocketUser userMention = _client.GetUser(userId);
                     Console.Write($"{userId}");
-                    users += $"{user.Mention} ";
+                    users += $"{userMention.Mention} ";
                 }
                 // 저장적으로 json에서 저장된 데이터 기반으로 메세지 수정 
                 Embed embed = new EmbedBuilder()
