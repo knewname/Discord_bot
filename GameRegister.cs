@@ -80,6 +80,7 @@ public class GameRegisterStorage
         gameRegister.cur++;
 
         await SaveAsync(list);
+        
         return gameRegister;
         
     }
@@ -90,7 +91,7 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
 
         GameRegisterInfo gameRegister = await SearchGameSchedule(msgId);
 
-        // users에 있다면 유저 삭제제
+        // users에 있다면 유저 삭제
         if (gameRegister.users.Contains(userId))
         {
             gameRegister.users.Remove(userId);
