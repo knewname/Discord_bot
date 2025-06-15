@@ -52,22 +52,24 @@ public class GameRegisterStorage
     }
 
     // json 데이터 가져오기 
-    public async Task<List<GameRegisterInfo>> LoadAsync()
+    public async Task LoadAsync()
     {
-        // 경로에 json이 없다면 생성 
         if (!File.Exists(_filePath))
-            return new List<GameRegisterInfo>();
+        {
+            regisrerList = new List<GameRegisterInfo>();
+            return;
+        }
 
-        // json 읽어오기기
         var json = await File.ReadAllTextAsync(_filePath);
 
-        // 파일이 비어 있는 경우 방어
         if (string.IsNullOrWhiteSpace(json))
-            return new List<GameRegisterInfo>();
+        {
+            regisrerList = new List<GameRegisterInfo>();
+            return;
+        }
 
-
-        return JsonSerializer.Deserialize<List<GameRegisterInfo>>(json)
-            ?? new List<GameRegisterInfo>();
+        regisrerList = JsonSerializer.Deserialize<List<GameRegisterInfo>>(json)
+                    ?? new List<GameRegisterInfo>();
     }
 
     public async Task<List<ulong>> LoadMsgIdList(List<GameRegisterInfo> list)
