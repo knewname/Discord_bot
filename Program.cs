@@ -140,7 +140,7 @@ class Program
                     .WithTitle($"{info.game}")
                     .WithDescription($"ID : {info.id}\n모집인원수 : {info.cur}/{info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
                     .WithColor(Color.Blue)
-                    .WithFooter(footer => footer.Text = "Powered by Discord.Net")
+                    .WithFooter(footer => footer.Text = "이리악귀들")
                     .WithTimestamp(DateTimeOffset.Now)
                     .Build();
 
