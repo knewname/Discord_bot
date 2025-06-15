@@ -223,7 +223,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                   .WithTitle($"{game}")
                   .WithDescription($"ID : {messageId}\n모집인원수 : 1/{max}\n시간 : {date} {time}\n 참여인원 : {user.Mention}")
                   .WithColor(Color.Blue)
-                  .WithFooter(footer => footer.Text = "Powered by Discord.Net")
+                  .WithFooter(footer => footer.Text = "이리악귀들")
                   .WithTimestamp(DateTimeOffset.Now)
                   .Build();
 
