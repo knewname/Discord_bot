@@ -131,6 +131,7 @@ class Program
         foreach (ulong userId in info.users)
         {
             SocketUser userMention = _client.GetUser(userId);
+            Console.Write($"{userId}");
             users += $"{userMention.Mention} ";
         }
 
