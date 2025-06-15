@@ -50,7 +50,8 @@ class Program
     {
         ulong guildId = 1377521292194091121;
         await _interactionService.AddModulesAsync(System.Reflection.Assembly.GetEntryAssembly(), null);
-        await _interactionService.RegisterCommandsToGuildAsync(guildId); // 전역 대신 이걸로 개발 시 빠르게 반영
+        // 슬래시 명령어를 "전역" 등록 (→ 모든 서버에서 사용 가능)
+        await _interactionService.RegisterCommandsGloballyAsync();
         Console.WriteLine("슬래시 명령어 등록 완료");
     }
 
