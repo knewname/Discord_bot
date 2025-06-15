@@ -34,7 +34,7 @@ public class GameRegisterStorage
 
     public async void InitScheduleList()
     {
-        regisrerList = await LoadAsync();
+        await LoadAsync();
         msgIdList = await LoadMsgIdList(regisrerList);
         foreach (ulong a in msgIdList)
             Console.Write($"{a}\n");
