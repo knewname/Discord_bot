@@ -34,8 +34,10 @@ public class GameRegisterStorage
 
     public async void InitScheduleList()
     {
-        await LoadAsync();
+        regisrerList = await LoadAsync();
         msgIdList = await LoadMsgIdList(regisrerList);
+        foreach (ulong a in msgIdList)
+            Console.Write($"{a}\n");
     }
     
     // json 파일 저장
@@ -71,6 +73,7 @@ public class GameRegisterStorage
         regisrerList = JsonSerializer.Deserialize<List<GameRegisterInfo>>(json)
                     ?? new List<GameRegisterInfo>();
     }
+
 
     public async Task<List<ulong>> LoadMsgIdList(List<GameRegisterInfo> list)
     {
@@ -131,7 +134,6 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
 
         foreach (var gameRegister in regisrerList)
         {
-            Console.WriteLine($"{gameRegister.id}");
             if (gameRegister.id == msgId)
                 return gameRegister;
         }
