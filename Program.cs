@@ -84,7 +84,7 @@ class Program
 
             else if (info == null)
             {
-                await channel.SendMessageAsync($"{message.Tags}에 {user} 님은 참여하실수 없습니다.");
+                await message.ReplyAsync($"{user} 님은 참여하실수 없습니다.");
                 // 해당 리액션 제거
                 await message.RemoveReactionAsync(reaction.Emote, user);
             }
