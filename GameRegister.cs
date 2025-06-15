@@ -34,7 +34,7 @@ public class GameRegisterStorage
 
     public async void InitScheduleList()
     {
-        regisrerList = await LoadAsync();
+        await LoadAsync();
         msgIdList = await LoadMsgIdList(regisrerList);
     }
     
@@ -156,9 +156,8 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     {
         try
         {
-            var list = await LoadAsync();
 
-            if (list.Any(entry => entry.id == msgId))
+            if (regisrerList.Any(entry => entry.id == msgId))
             {
                 Console.WriteLine("이미 등록된 메시지 ID입니다. 추가하지 않습니다.");
                 return;
@@ -175,8 +174,8 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
             };
             newEntry.users.Add(regUser);
 
-            list.Add(newEntry);
-            await SaveAsync(list);
+            regisrerList.Add(newEntry);
+            await SaveAsync(regisrerList);
 
             Console.WriteLine("저장 완료!");
         }
