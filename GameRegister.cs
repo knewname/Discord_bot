@@ -86,6 +86,7 @@ public class GameRegisterStorage
     public async Task<GameRegisterInfo> AddUser(ulong msgId, ulong userId)
     {
         GameRegisterInfo gameRegister = SearchGameSchedule(regisrerList, msgId);
+        Console.Write($"{gameRegister}\n");
 
         // 이미 참가중일 때
         if (gameRegister.users.Contains(userId))
