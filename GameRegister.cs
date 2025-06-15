@@ -23,12 +23,21 @@ public class GameRegisterInfo
 public class GameRegisterStorage
 {
     private readonly string _filePath;
+    private List<GameRegisterInfo> regisrerList = new List<GameRegisterInfo>();
+    public List<ulong> msgIdList = new List<ulong>();
 
     public GameRegisterStorage(string filePath = "game_register.json")
     {
         _filePath = filePath;
+        InitScheduleList();
     }
 
+    public async void InitScheduleList()
+    {
+        regisrerList = await LoadAsync();
+        msgIdList = await LoadMsgIdList(regisrerList);
+    }
+    
     // json 파일 저장
     public async Task SaveAsync(List<GameRegisterInfo> list)
     {
@@ -61,14 +70,23 @@ public class GameRegisterStorage
             ?? new List<GameRegisterInfo>();
     }
 
+    public async Task<List<ulong>> LoadMsgIdList(List<GameRegisterInfo> list)
+    {
+
+        List<ulong> msgIds = new List<ulong>();
+
+        foreach (var info in list)
+            msgIds.Add(info.id);
+
+        return msgIds;
+    }
+
 
     // 인원 추가시 기존 json 파일 수정
     public async Task<GameRegisterInfo> AddUser(ulong msgId, ulong userId)
     {
-        var list = await LoadAsync();
+        GameRegisterInfo gameRegister = SearchGameSchedule(regisrerList, msgId);
 
-        GameRegisterInfo gameRegister = await SearchGameSchedule(list, msgId);
-        
         // 이미 참가중일 때
         if (gameRegister.users.Contains(userId))
             return null;
@@ -80,17 +98,15 @@ public class GameRegisterStorage
         gameRegister.users.Add(userId);
         gameRegister.cur++;
 
-        await SaveAsync(list);
+        await SaveAsync(regisrerList);
 
         return gameRegister;
-        
+
     }
 
 public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     {
-        var list = await LoadAsync();
-
-        GameRegisterInfo gameRegister = await SearchGameSchedule(list, msgId);
+        GameRegisterInfo gameRegister = SearchGameSchedule(regisrerList, msgId);
 
         // users에 있다면 유저 삭제
         if (gameRegister.users.Contains(userId))
@@ -99,7 +115,7 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
             gameRegister.cur--;
         }
         // 수정된 내용 수정 후 저장
-        await SaveAsync(list);
+        await SaveAsync(regisrerList);
 
         return gameRegister;
         
@@ -107,7 +123,7 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
 
 
 
-    public async Task<GameRegisterInfo> SearchGameSchedule(List<GameRegisterInfo> list, ulong msgId)
+    public GameRegisterInfo SearchGameSchedule(List<GameRegisterInfo> list, ulong msgId)
     {
 
         foreach (var gameRegister in list)

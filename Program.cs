@@ -7,7 +7,6 @@ class Program
 {
     private DiscordSocketClient _client;
     private InteractionService _interactionService;
-
     public static Task Main(string[] args) => new Program().MainAsync();
 
     public async Task MainAsync()
@@ -23,7 +22,7 @@ class Program
         _client.ReactionRemoved += OnReactionRemovedAsync;
 
 
-
+        new GameRegisterStorage();
 
         string token = "MTM3NzI3NDMzMzU4MzY0MjcyNw.GDgukg.AeTbdPJeGy8qNkQH93cuw326OujUd2K27toM7Y";
 
@@ -71,7 +70,7 @@ class Program
         GameRegisterStorage gameRegister = new GameRegisterStorage();
 
 
-        if (reaction.Emote.Name == "🆗")
+        if (reaction.Emote.Name == "🆗" && gameRegister.msgIdList.Contains(message.Id))
         {
             GameRegisterInfo info = await gameRegister.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경경
@@ -99,7 +98,7 @@ class Program
         //Console.WriteLine($"❌ {reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 제거했습니다.");
 
         // 예시: 특정 이모지 감지
-        if (reaction.Emote.Name == "🆗")
+        if (reaction.Emote.Name == "🆗" && gameRegister.msgIdList.Contains(message.Id))
         {
             GameRegisterInfo info = await gameRegister.RemoveUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경
