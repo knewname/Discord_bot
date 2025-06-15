@@ -70,7 +70,7 @@ class Program
         GameRegisterStorage gameRegister = new GameRegisterStorage();
 
 
-        if (reaction.Emote.Name == "🆗" && gameRegister.msgIdList.Contains(message.Id))
+        if (reaction.Emote.Name == "🆗")
         {
             GameRegisterInfo info = await gameRegister.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경경
