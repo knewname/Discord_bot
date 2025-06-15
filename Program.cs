@@ -5,8 +5,9 @@ using System;
 using System.Threading.Tasks;
 class Program
 {
-    private DiscordSocketClient _client;
-    private InteractionService _interactionService;
+    private DiscordSocketClient? _client;
+    private InteractionService? _interactionService;
+    private GameRegisterStorage? gameRegister;
     public static Task Main(string[] args) => new Program().MainAsync();
 
     public async Task MainAsync()
@@ -22,7 +23,7 @@ class Program
         _client.ReactionRemoved += OnReactionRemovedAsync;
 
 
-        new GameRegisterStorage();
+        gameRegister = new GameRegisterStorage();
 
         string token = "MTM3NzI3NDMzMzU4MzY0MjcyNw.GDgukg.AeTbdPJeGy8qNkQH93cuw326OujUd2K27toM7Y";
 
@@ -67,14 +68,13 @@ class Program
         var message = await cacheableMessage.GetOrDownloadAsync();
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
-        GameRegisterStorage gameRegister = new GameRegisterStorage();
         Console.Write("asdf\n");
 
 
         if (reaction.Emote.Name == "🆗")
         {
             GameRegisterInfo info = await gameRegister.AddUser(reaction.MessageId, reaction.UserId);
-            // 정상적으로 추가 완료시 기존 메세지 변경경
+            // 정상적으로 추가 완료시 기존 메세지 변경 
             if (info != null)
                 await EditGameRegisterMessage(message, info);
 
@@ -94,7 +94,6 @@ class Program
         var message = await cacheableMessage.GetOrDownloadAsync();
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
-        GameRegisterStorage gameRegister = new GameRegisterStorage();
 
         //Console.WriteLine($"❌ {reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 제거했습니다.");
 
