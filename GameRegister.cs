@@ -132,8 +132,6 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     public GameRegisterInfo SearchGameSchedule(ulong msgId)
     {
 
-        if (regisrerList == null)
-            Console.WriteLine("wrong");
 
         foreach (var gameRegister in regisrerList)
             {

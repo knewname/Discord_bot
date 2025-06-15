@@ -68,7 +68,7 @@ class Program
         var message = await cacheableMessage.GetOrDownloadAsync();
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
-        Console.Write("asdf\n");
+        Console.Write($"{message.Id}\n");
 
 
         if (reaction.Emote.Name == "🆗")
@@ -77,6 +77,7 @@ class Program
             // 정상적으로 추가 완료시 기존 메세지 변경 
             if (info != null)
                 await EditGameRegisterMessage(message, info);
+
 
             else if (info == null && !user.IsBot)
             {
