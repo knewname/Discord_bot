@@ -68,10 +68,10 @@ class Program
         var message = await cacheableMessage.GetOrDownloadAsync();
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
-        Console.Write($"{message.Id}\n");
 
+        Console.WriteLine($"{message.Id}");
 
-        if (reaction.Emote.Name == "🆗")
+        if (reaction.Emote.Name == "🆗" && !user.IsBot)
         {
             GameRegisterInfo info = await gameRegisterStorage.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경 
@@ -79,7 +79,7 @@ class Program
                 await EditGameRegisterMessage(message, info);
 
 
-            else if (info == null && !user.IsBot)
+            else if (info == null)
             {
                 await channel.SendMessageAsync($"{user} 님은 참여하실수 없습니다.");
                 // 해당 리액션 제거
@@ -152,26 +152,26 @@ class Program
 
 public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 {
-    [SlashCommand("hello", "봇이 인사합니다.")]
-    public async Task Hello()
-    {
-        await RespondAsync("부르셨나요?");
-    }
+    // [SlashCommand("hello", "봇이 인사합니다.")]
+    // public async Task Hello()
+    // {
+    //     await RespondAsync("부르셨나요?");
+    // }
 
-    [SlashCommand("info", "봇 정보를 출력합니다.")]
-    public async Task Info()
-    {
-        // 출력값을 임베드박스로 표현현
-        var embed = new EmbedBuilder()
-            .WithTitle("봇 정보")
-            .WithDescription("이것은 예시 봇입니다.")
-            .WithColor(Color.Blue)
-            .WithFooter(footer => footer.Text = "Powered by Discord.Net")
-            .WithTimestamp(DateTimeOffset.Now)
-            .Build();
+    // [SlashCommand("info", "봇 정보를 출력합니다.")]
+    // public async Task Info()
+    // {
+    //     // 출력값을 임베드박스로 표현현
+    //     var embed = new EmbedBuilder()
+    //         .WithTitle("봇 정보")
+    //         .WithDescription("이것은 예시 봇입니다.")
+    //         .WithColor(Color.Blue)
+    //         .WithFooter(footer => footer.Text = "Powered by Discord.Net")
+    //         .WithTimestamp(DateTimeOffset.Now)
+    //         .Build();
 
-        await RespondAsync(embed: embed);
-    }
+    //     await RespondAsync(embed: embed);
+    // }
 
     [SlashCommand("party", "파티원을 모집합니다.")]
     public async Task Get(string date, string time, string game, int max)
