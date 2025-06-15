@@ -68,6 +68,7 @@ class Program
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
         GameRegisterStorage gameRegister = new GameRegisterStorage();
+        Console.Write("asdf\n");
 
 
         if (reaction.Emote.Name == "🆗")
