@@ -137,7 +137,7 @@ class Program
 
         Embed embed = new EmbedBuilder()
                     .WithTitle($"{info.game}")
-                    .WithDescription($"ID : {info.id}\n모집인원수 : {info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
+                    .WithDescription($"ID : {info.id}\n모집인원수 : {info.cur}/{info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
                     .WithColor(Color.Blue)
                     .WithFooter(footer => footer.Text = "Powered by Discord.Net")
                     .WithTimestamp(DateTimeOffset.Now)
@@ -198,7 +198,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // 메세지 ID를 미리 받기 위한 선 입력메세지 
         var embed = new EmbedBuilder()
                 .WithTitle($"{game}")
-                .WithDescription($"ID : [잠시 후 결정됨]\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
+                .WithDescription($"ID : [잠시 후 결정됨]\n모집인원수 : 1/{max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
                 .WithColor(Color.Blue)
                 .Build();
         await RespondAsync(embed: embed);
@@ -218,7 +218,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             // embed 포멧 실제 포멧으로 수정정
             embed = new EmbedBuilder()
                   .WithTitle($"{game}")
-                  .WithDescription($"ID : {messageId}\n모집인원수 : {max}\n시간 : {date} {time}\n 참여인원 : {user.Mention}")
+                  .WithDescription($"ID : {messageId}\n모집인원수 : 1/{max}\n시간 : {date} {time}\n 참여인원 : {user.Mention}")
                   .WithColor(Color.Blue)
                   .WithFooter(footer => footer.Text = "Powered by Discord.Net")
                   .WithTimestamp(DateTimeOffset.Now)
