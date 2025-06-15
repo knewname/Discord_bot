@@ -71,7 +71,7 @@ class Program
 
         Console.WriteLine($"{message.Id}");
 
-        if (reaction.Emote.Name == "🆗" && !user.IsBot)
+        if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id))
         {
             GameRegisterInfo info = await gameRegisterStorage.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경 
@@ -99,7 +99,7 @@ class Program
         //Console.WriteLine($"❌ {reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 제거했습니다.");
 
         // 예시: 특정 이모지 감지
-        if (reaction.Emote.Name == "🆗" && gameRegisterStorage.msgIdList.Contains(message.Id))
+        if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id))
         {
             GameRegisterInfo info = await gameRegisterStorage.RemoveUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경
