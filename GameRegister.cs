@@ -87,7 +87,7 @@ public class GameRegisterStorage
     // 인원 추가시 기존 json 파일 수정
     public async Task<GameRegisterInfo> AddUser(ulong msgId, ulong userId)
     {
-        GameRegisterInfo gameRegister = SearchGameSchedule(regisrerList, msgId);
+        GameRegisterInfo gameRegister = SearchGameSchedule(msgId);
         Console.Write($"{gameRegister.id}\n");
 
         // 이미 참가중일 때
@@ -109,7 +109,7 @@ public class GameRegisterStorage
 
 public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     {
-        GameRegisterInfo gameRegister = SearchGameSchedule(regisrerList, msgId);
+        GameRegisterInfo gameRegister = SearchGameSchedule(msgId);
 
         // users에 있다면 유저 삭제
         if (gameRegister.users.Contains(userId))
@@ -126,10 +126,10 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
 
 
 
-    public GameRegisterInfo SearchGameSchedule(List<GameRegisterInfo> list, ulong msgId)
+    public GameRegisterInfo SearchGameSchedule(ulong msgId)
     {
 
-        foreach (var gameRegister in list)
+        foreach (var gameRegister in regisrerList)
             if (gameRegister.id == msgId)
                 return gameRegister;
 
