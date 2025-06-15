@@ -215,6 +215,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
             ulong messageId = botMessage.Id;
             var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
+
+            storage.msgIdList.Add(messageId);
             
             // embed 포멧 실제 포멧으로 수정정
             embed = new EmbedBuilder()
