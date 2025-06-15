@@ -48,10 +48,12 @@ class Program
 
     private async Task ReadyAsync()
     {
-        ulong guildId = 1377521292194091121;
+        //ulong guildId = 1377521292194091121;
+        //ulong erSerId = 1263418864067149904;
         await _interactionService.AddModulesAsync(System.Reflection.Assembly.GetEntryAssembly(), null);
         // 슬래시 명령어를 "전역" 등록 (→ 모든 서버에서 사용 가능)
         await _interactionService.RegisterCommandsGloballyAsync();
+        // await RegisterCommandsToGuildAsync(ulong guildId) 
         Console.WriteLine("슬래시 명령어 등록 완료");
     }
 
@@ -82,7 +84,7 @@ class Program
 
             else if (info == null)
             {
-                await channel.SendMessageAsync($"{user} 님은 참여하실수 없습니다.");
+                await channel.SendMessageAsync($"{message.Tags}에 {user} 님은 참여하실수 없습니다.");
                 // 해당 리액션 제거
                 await message.RemoveReactionAsync(reaction.Emote, user);
             }
