@@ -36,6 +36,8 @@ public class GameRegisterStorage
     {
         regisrerList = await LoadAsync();
         msgIdList = await LoadMsgIdList(regisrerList);
+        foreach (ulong a in msgIdList)
+            Console.Write($"{a}\n");
     }
     
     // json 파일 저장
@@ -86,7 +88,7 @@ public class GameRegisterStorage
     public async Task<GameRegisterInfo> AddUser(ulong msgId, ulong userId)
     {
         GameRegisterInfo gameRegister = SearchGameSchedule(regisrerList, msgId);
-        Console.Write($"{gameRegister}\n");
+        Console.Write($"{gameRegister.id}\n");
 
         // 이미 참가중일 때
         if (gameRegister.users.Contains(userId))
