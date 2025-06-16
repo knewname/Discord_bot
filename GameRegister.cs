@@ -17,6 +17,7 @@ public class GameRegisterInfo
     public string time { get; set; }       // 할 시간 (예: "21:00")
     public string game { get; set; }       // 게임 + 모드 (예: "LOL-Normal")
     public List<ulong> users { get; set; } = new();       // 등록한 유저 이름 또는 ID
+    public ulong author { get; set; }       // 등록한 유저 ID
     public int cur { get; set; }           // 현재 등록된 명수
     public int max { get; set; }           // 최대 인원수
 }
@@ -128,16 +129,15 @@ public class GameRegisterStorage
     }
 
 
-    public async Task<int> RemoveSchedule(ulong msgId)
+    public async Task<int> RemoveSchedule(ulong msgId, ulong user)
     {
         try
         {
             GameRegisterInfo info = SearchGameSchedule(msgId);
             if (info == null)
-            {
-                Console.WriteLine("❌ 해당 ID의 스케줄을 찾을 수 없습니다.");
-                return 3; // 해당 없음
-            }
+                return 2; // 해당 ID의 스케줄을 찾을 수 없습니다.
+            else if(info.author != user)
+                return 3; // 등록자외에는 삭제가 불가능합니다.
 
             regisrerList.Remove(info); // 리스트에서 제거
 
@@ -146,15 +146,10 @@ public class GameRegisterStorage
             Console.WriteLine($"✅ 스케줄 삭제 완료: {msgId}");
             return 0; // 성공
         }
-        catch (FormatException)
+        catch (Exception)
         {
             Console.WriteLine("❌ 형식 오류: 숫자가 아님");
             return 1;   // 오류 코드 리턴 
-        }
-        catch (OverflowException)
-        {
-            Console.WriteLine("❌ 범위 오류: ulong 범위를 초과함");
-            return 2;   // 오류 코드 리턴 
         }
 
     }
@@ -204,6 +199,7 @@ public class GameRegisterStorage
                 date = date,
                 time = time,
                 game = game,
+                author = regUser,
                 cur = 1,
                 max = max
             };

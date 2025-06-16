@@ -109,7 +109,7 @@ class Program
         {
             GameRegisterInfo info = await gameRegisterStorage.RemoveUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경
-            if (info != null)
+            if (info != null && user.Id != info.author)
             {
                 string users = "";
                 foreach (ulong userId in info.users)
@@ -120,12 +120,6 @@ class Program
 
                 await EditGameRegisterMessage(message, info);
 
-            }
-            else if (info == null && !user.IsBot)
-            {
-                await channel.SendMessageAsync($"{user} 님은 참여하실수 없습니다.");
-                // 해당 리액션 제거
-                await message.RemoveReactionAsync(reaction.Emote, user);
             }
         }
     }
@@ -243,7 +237,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             await msg.ModifyAsync(m => { m.Embed = embed; });
 
             await gameRegisterStorage.RegisterSchedule(
-                messageId,  // ulong → string
+                messageId,  
                 date,
                 time,
                 game,
@@ -263,10 +257,21 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     {
         ulong msgId = ulong.Parse(id);
         var gameRegisterStorage = Program.gameRegisterStorage;
-        await gameRegisterStorage.RemoveSchedule(msgId);
-        var msg = await Context.Channel.GetMessageAsync(msgId) as IUserMessage;
-        await msg.DeleteAsync();
-        await RespondAsync("정상적으로 삭제되었습니다.", ephemeral: true);
+        int errorCode = await gameRegisterStorage.RemoveSchedule(msgId, Context.User.Id);
+        if (errorCode == 0)
+        {
+            var msg = await Context.Channel.GetMessageAsync(msgId) as IUserMessage;
+            await msg.DeleteAsync();
+            await RespondAsync("정상적으로 삭제되었습니다.", ephemeral: true);
+        }
+        else if (errorCode == 1)
+            await RespondAsync("ID값은 19자리의 숫자값이여야합니다.", ephemeral: true);
+        else if (errorCode == 2)
+            await RespondAsync("해당 ID값을 찾을수 없습니다.", ephemeral: true);
+        else if (errorCode == 3)
+            await RespondAsync("등록자만이 삭제할수 있습니다.", ephemeral: true);
+        
+
     }
     
     
