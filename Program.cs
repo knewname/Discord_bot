@@ -109,7 +109,7 @@ class Program
         {
             GameRegisterInfo info = await gameRegisterStorage.RemoveUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경
-            if (info != null && user.Id != info.author)
+            if (info != null)
             {
                 string users = "";
                 foreach (ulong userId in info.users)

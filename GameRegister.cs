@@ -115,6 +115,10 @@ public class GameRegisterStorage
     {
         GameRegisterInfo gameRegister = SearchGameSchedule(msgId);
 
+        // 삭제할 user가 등록자가 같다면 삭제 하지 않고 return
+        if (userId == gameRegister.author)
+            return gameRegister;
+            
         // users에 있다면 유저 삭제
         if (gameRegister.users.Contains(userId))
         {
