@@ -176,8 +176,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     //     await RespondAsync(embed: embed);
     // }
 
-    [SlashCommand("party", "파티원을 모집합니다.")]
-    public async Task Get(string date, string time, string game, int max)
+    [SlashCommand("파티모집", "파티원을 모집합니다.")]
+    public async Task MakeParty(string date, string time, string game, int max)
     {
         // ┌────────────────────┬─────────────────────────────────────────────┐
         // │   Slash Command    │            C# (Discord.Net) Type            │
@@ -195,7 +195,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // └────────────────────┴─────────────────────────────────────────────┘
 
         /* $"{user.Mention}" > 유저 멘션*/
-        var storage = Program.gameRegisterStorage;
+        var gameRegisterStorage = Program.gameRegisterStorage;
         var user = Context.User;
 
 
@@ -219,8 +219,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             ulong messageId = botMessage.Id;
             var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
 
-            storage.msgIdList.Add(messageId);
-            
+            gameRegisterStorage.msgIdList.Add(messageId);
+
             // embed 포멧 실제 포멧으로 수정정
             embed = new EmbedBuilder()
                   .WithTitle($"{game}")
@@ -233,20 +233,32 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             // msg 수정정
             await msg.ModifyAsync(m => { m.Embed = embed; });
 
-            await storage.RegisterSchedule(
+            await gameRegisterStorage.RegisterSchedule(
                 messageId,  // ulong → string
                 date,
                 time,
                 game,
-                user.Id,     
+                user.Id,
                 max
             );
-            
-            
+
+
         }
 
 
     }
+
+
+    [SlashCommand("파티삭제", "파티모집을 삭제합니다")]
+    public async Task RemoveParty(string id)
+    {
+        var gameRegisterStorage = Program.gameRegisterStorage;
+        var user = Context.User;
+        
+        
+    }
+    
+    
     
     
 

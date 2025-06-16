@@ -110,7 +110,7 @@ public class GameRegisterStorage
 
     }
 
-public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
+    public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     {
         GameRegisterInfo gameRegister = SearchGameSchedule(msgId);
 
@@ -128,16 +128,49 @@ public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     }
 
 
+    public int RemoveSchedule(string msgId)
+    {
+        try
+        {
+            ulong msgIDLong = ulong.Parse(msgId);
+            GameRegisterInfo info = SearchGameSchedule(msgIDLong);
+            if (info == null)
+            {
+                Console.WriteLine("❌ 해당 ID의 스케줄을 찾을 수 없습니다.");
+                return 3; // 해당 없음
+            }
+            
+            regisrerList.Remove(info); // 리스트에서 제거
+
+            SaveAsync(regisrerList).Wait(); // JSON 파일에도 반영 (동기 처리)
+
+            Console.WriteLine($"✅ 스케줄 삭제 완료: {msgId}");
+            return 0; // 성공
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("❌ 형식 오류: 숫자가 아님");
+            return 1;   // 오류 코드 리턴 
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("❌ 범위 오류: ulong 범위를 초과함");
+            return 2;   // 오류 코드 리턴 
+        }
+
+    }
+
+
 
     public GameRegisterInfo SearchGameSchedule(ulong msgId)
     {
 
 
         foreach (var gameRegister in regisrerList)
-            {
-                if (gameRegister.id == msgId)
-                    return gameRegister;
-            }
+        {
+            if (gameRegister.id == msgId)
+                return gameRegister;
+        }
 
         return null;
     }
