@@ -128,7 +128,7 @@ public class GameRegisterStorage
     }
 
 
-    public int RemoveSchedule(string msgId)
+    public async Task<int> RemoveSchedule(string msgId)
     {
         try
         {
@@ -139,10 +139,10 @@ public class GameRegisterStorage
                 Console.WriteLine("❌ 해당 ID의 스케줄을 찾을 수 없습니다.");
                 return 3; // 해당 없음
             }
-            
+
             regisrerList.Remove(info); // 리스트에서 제거
 
-            SaveAsync(regisrerList).Wait(); // JSON 파일에도 반영 (동기 처리)
+            await SaveAsync(regisrerList); // JSON 파일에도 반영 (동기 처리)
 
             Console.WriteLine($"✅ 스케줄 삭제 완료: {msgId}");
             return 0; // 성공

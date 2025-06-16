@@ -253,9 +253,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     public async Task RemoveParty(string id)
     {
         var gameRegisterStorage = Program.gameRegisterStorage;
-        var user = Context.User;
-        
-        
+        await gameRegisterStorage.RemoveSchedule(id);
+
     }
     
     
