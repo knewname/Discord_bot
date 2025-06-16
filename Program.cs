@@ -266,7 +266,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         await gameRegisterStorage.RemoveSchedule(msgId);
         var msg = await Context.Channel.GetMessageAsync(msgId) as IUserMessage;
         await msg.DeleteAsync();
-
+        await RespondAsync("정상적으로 삭제되었습니다.", ephemeral: true);
     }
     
     
