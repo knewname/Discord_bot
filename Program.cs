@@ -261,8 +261,11 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("파티삭제", "파티모집을 삭제합니다")]
     public async Task RemoveParty(string id)
     {
+        ulong msgId = ulong.Parse(id);
         var gameRegisterStorage = Program.gameRegisterStorage;
-        await gameRegisterStorage.RemoveSchedule(id);
+        await gameRegisterStorage.RemoveSchedule(msgId);
+        var msg = await Context.Channel.GetMessageAsync(msgId) as IUserMessage;
+        await msg.DeleteAsync();
 
     }
     

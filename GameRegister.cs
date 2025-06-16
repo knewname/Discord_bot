@@ -128,12 +128,11 @@ public class GameRegisterStorage
     }
 
 
-    public async Task<int> RemoveSchedule(string msgId)
+    public async Task<int> RemoveSchedule(ulong msgId)
     {
         try
         {
-            ulong msgIDLong = ulong.Parse(msgId);
-            GameRegisterInfo info = SearchGameSchedule(msgIDLong);
+            GameRegisterInfo info = SearchGameSchedule(msgId);
             if (info == null)
             {
                 Console.WriteLine("❌ 해당 ID의 스케줄을 찾을 수 없습니다.");
