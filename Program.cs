@@ -49,11 +49,12 @@ class Program
     private async Task ReadyAsync()
     {
         //ulong guildId = 1377521292194091121;
-        //ulong erSerId = 1263418864067149904;
+        ulong erSerId = 1263418864067149904;
         await _interactionService.AddModulesAsync(System.Reflection.Assembly.GetEntryAssembly(), null);
         // 슬래시 명령어를 "전역" 등록 (→ 모든 서버에서 사용 가능)
-        await _interactionService.RegisterCommandsGloballyAsync();
-        // await RegisterCommandsToGuildAsync(ulong guildId) 
+        //await _interactionService.RegisterCommandsGloballyAsync();
+        await _interactionService.RegisterCommandsToGuildAsync(1263418864067149904);
+
         Console.WriteLine("슬래시 명령어 등록 완료");
     }
 
@@ -72,7 +73,7 @@ class Program
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
 
-        Console.WriteLine($"{message.Id}");
+        Console.WriteLine($"{user.Id}");
 
         if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id))
         {
