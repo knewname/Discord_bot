@@ -25,7 +25,7 @@ class Program
 
         gameRegisterStorage = new GameRegisterStorage();
 
-        string token = "MTM3NzI3NDMzMzU4MzY0MjcyNw.GDgukg.AeTbdPJeGy8qNkQH93cuw326OujUd2K27toM7Y";
+        string token = "MTM3NzI3NDMzMzU4MzY0MjcyNw.GS_FoI.qV_V8OH9QrKpI3Ebfl_Lk_O-B3fp4hOka6ZIR8";
 
         await _client.LoginAsync(TokenType.Bot, token);
         await _client.StartAsync();
@@ -172,8 +172,10 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
     //     await RespondAsync(embed: embed);
     // }
+
+    // 기존 명령어 유지(party를 유지하여 사용자가 혼란오지 않게함)
     [SlashCommand("party", "파티원을 모집합니다.")]
-    public async Task parry(string date, string time, string game, int max)
+    public async Task party(string date, string time, string game, int max)
     {
         await MakeParty(date, time, game, max);
     }
@@ -197,12 +199,14 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // │ File               │ IAttachment                                 │
         // └────────────────────┴─────────────────────────────────────────────┘
 
-        /* $"{user.Mention}" > 유저 멘션*/
+        // 싱글톤으로 선언된 gameRegisterStorage 데이터를 가져옴
         var gameRegisterStorage = Program.gameRegisterStorage;
+        // 명령어를 작성한 유저 데이터를 가져옴
         var user = Context.User;
 
 
         // 메세지 ID를 미리 받기 위한 선 입력메세지 
+        // 게임 스케줄에 대한 고유값으로 메세지 ID값을 받기 때문에 메세지를 작성함으로 해당 ID값이 필요
         var embed = new EmbedBuilder()
                 .WithTitle($"{game}")
                 .WithDescription($"ID : [잠시 후 결정됨]\n모집인원수 : 1/{max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
@@ -210,7 +214,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 .Build();
         await RespondAsync(embed: embed);
 
-        // 메세지 ID 저장
+        // ID를 받기 위한 작성한 메세지에 대한 정보 가져오기
         var channel = Context.Channel as SocketTextChannel;
         var messages = await channel.GetMessagesAsync(1).FlattenAsync();
         var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
@@ -219,9 +223,11 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             // 메시지가 존재하면 이모지 반응 추가
             await botMessage.AddReactionAsync(new Emoji("🆗"));
 
+            // 메세지 ID 저장
             ulong messageId = botMessage.Id;
             var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
 
+            // 스케쥴 고유값을 list에 add
             gameRegisterStorage.msgIdList.Add(messageId);
 
             // embed 포멧 실제 포멧으로 수정정
@@ -233,11 +239,12 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                   .WithTimestamp(DateTimeOffset.Now)
                   .Build();
 
-            // msg 수정정
+            // 실제 포멧으로 수정한 데이터로 수정 
             await msg.ModifyAsync(m => { m.Embed = embed; });
 
+            // 예약된 스케줄을 저장
             await gameRegisterStorage.RegisterSchedule(
-                messageId,  
+                messageId,
                 date,
                 time,
                 game,
@@ -270,11 +277,25 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             await RespondAsync("해당 ID값을 찾을수 없습니다.", ephemeral: true);
         else if (errorCode == 3)
             await RespondAsync("등록자만이 삭제할수 있습니다.", ephemeral: true);
-        
+
 
     }
-    
-    
+
+
+
+    [SlashCommand("파티수정", "파티의 정보를 수정합니다.")]
+    public async Task EditParty(string id, string date = null, string time = null, string game = null, int? max = null)
+    {
+        ulong msgId = ulong.Parse(id);
+        var gameRegisterStorage = Program.gameRegisterStorage;
+        GameRegisterInfo gameRegisterInfo = gameRegisterStorage.SearchGameSchedule(msgId);
+        if (date != null)
+        {
+            
+        }
+
+        
+    }
     
     
 
