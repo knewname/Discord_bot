@@ -129,7 +129,7 @@ class Program
                     users += $"{userMention.Mention} ";
                 }
 
-                await EditGameRegisterMessage(message, info);
+                await  EditGameRegisterMessage(message, info);
 
             }
         }
@@ -143,7 +143,6 @@ class Program
         foreach (ulong userId in info.users)
         {
             SocketUser userMention = _client.GetUser(userId);
-            Console.Write($"{userId}");
             users += $"{userMention.Mention} ";
         }
 
@@ -158,6 +157,8 @@ class Program
         await msg.ModifyAsync(m => { m.Embed = embed; });
 
     }
+
+    
 
 }
 
@@ -295,17 +296,30 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
     [SlashCommand("파티수정", "파티의 정보를 수정합니다.")]
-    public async Task EditParty(string id, string date = null, string time = null, string game = null, int? max = null)
+    public async Task EditParty(string id, string? date = null, string? time = null, string? game = null, int? max = null)
     {
         ulong msgId = ulong.Parse(id);
         var gameRegisterStorage = Program.gameRegisterStorage;
         GameRegisterInfo gameRegisterInfo = gameRegisterStorage.SearchGameSchedule(msgId);
         if (date != null)
-        {
-            
-        }
+            gameRegisterInfo.date = date;
+        if (time != null)
+            gameRegisterInfo.time = time;
+
+        if (game != null)
+            gameRegisterInfo.game = game;
+
+        if (max != null)
+            gameRegisterInfo.max = (int)max;
+
+        await gameRegisterStorage.SaveAsync();
 
         
+        // 메세지 ID 저장
+        var msg = await Context.Channel.GetMessageAsync(msgId) as IUserMessage;
+        var guild = (msg.Channel as SocketGuildChannel)?.Guild;         // 현재 채널로 서버 guild값을 가져옴
+        await gameRegisterStorage.EditGameRegisterMessage(msg, gameRegisterInfo, guild);
+
     }
     
     

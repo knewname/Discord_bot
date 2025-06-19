@@ -24,25 +24,25 @@ public class GameRegisterInfo
 public class GameRegisterStorage
 {
     private readonly string _filePath;
-    private List<GameRegisterInfo> regisrerList = new List<GameRegisterInfo>();
-    public List<ulong> msgIdList = new List<ulong>();
+    private List<GameRegisterInfo> regisrerList = new List<GameRegisterInfo>();     // 스케쥴 정보 저장
+    public List<ulong> msgIdList = new List<ulong>();       // 시케쥴 고유값 저장 (외부 접근을 위해 Public 선언)
 
+    // json 데이터 가져오기
     public GameRegisterStorage(string filePath = "game_register.json")
     {
         _filePath = filePath;
         InitScheduleList();
     }
 
+    // json data list에 저장
     public async void InitScheduleList()
     {
         await LoadAsync();
         msgIdList = await LoadMsgIdList(regisrerList);
-        foreach (ulong a in msgIdList)
-            Console.Write($"{a}\n");
     }
-    
+
     // json 파일 저장
-    public async Task SaveAsync(List<GameRegisterInfo> list)
+    public async Task SaveAsync()
     {
         var options = new JsonSerializerOptions
         {
@@ -50,7 +50,7 @@ public class GameRegisterStorage
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
-        var json = JsonSerializer.Serialize(list, options);
+        var json = JsonSerializer.Serialize(regisrerList, options);
         await File.WriteAllTextAsync(_filePath, json);
     }
 
@@ -105,7 +105,7 @@ public class GameRegisterStorage
         gameRegister.users.Add(userId);
         gameRegister.cur++;
 
-        await SaveAsync(regisrerList);
+        await SaveAsync();
 
         return gameRegister;
 
@@ -118,7 +118,7 @@ public class GameRegisterStorage
         // 삭제할 user가 등록자가 같다면 삭제 하지 않고 return
         if (userId == gameRegister.author)
             return gameRegister;
-            
+
         // users에 있다면 유저 삭제
         if (gameRegister.users.Contains(userId))
         {
@@ -126,10 +126,10 @@ public class GameRegisterStorage
             gameRegister.cur--;
         }
         // 수정된 내용 수정 후 저장
-        await SaveAsync(regisrerList);
+        await SaveAsync();
 
         return gameRegister;
-        
+
     }
 
 
@@ -140,12 +140,12 @@ public class GameRegisterStorage
             GameRegisterInfo info = SearchGameSchedule(msgId);
             if (info == null)
                 return 2; // 해당 ID의 스케줄을 찾을 수 없습니다.
-            else if(info.author != user)
+            else if (info.author != user)
                 return 3; // 등록자외에는 삭제가 불가능합니다.
 
             regisrerList.Remove(info); // 리스트에서 제거
 
-            await SaveAsync(regisrerList); // JSON 파일에도 반영 (동기 처리)
+            await SaveAsync(); // JSON 파일에도 반영 (동기 처리)
 
             Console.WriteLine($"✅ 스케줄 삭제 완료: {msgId}");
             return 0; // 성공
@@ -210,7 +210,7 @@ public class GameRegisterStorage
             newEntry.users.Add(regUser);
 
             regisrerList.Add(newEntry);
-            await SaveAsync(regisrerList);
+            await SaveAsync();
 
             Console.WriteLine("저장 완료!");
         }
@@ -219,6 +219,30 @@ public class GameRegisterStorage
             Console.WriteLine($"[RegisterSchedule 오류] {ex.Message}");
         }
     }
+
+    public async Task EditGameRegisterMessage(IUserMessage msg, GameRegisterInfo info, SocketGuild guild)
+    {
+        string users = "";
+
+        foreach (ulong userId in info.users)
+        {
+            SocketGuildUser user = guild.GetUser(userId);
+            users += user != null ? $"{user.Mention} " : $"(ID:{userId}) ";
+        }
+
+        var embed = new EmbedBuilder()
+            .WithTitle($"{info.game}")
+            .WithDescription($"ID : {info.id}\n모집인원수 : {info.cur}/{info.max}\n시간 : {info.date} {info.time}\n참여인원 : {users}")
+            .WithColor(Color.Blue)
+            .WithFooter(footer => footer.Text = "이리악귀들")
+            .WithTimestamp(DateTimeOffset.Now)
+            .Build();
+
+        await msg.ModifyAsync(m => { m.Embed = embed; });
+    }
+
+    
+    
 
 
 
