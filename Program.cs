@@ -3,6 +3,9 @@ using Discord.WebSocket;
 using Discord.Interactions;
 using System;
 using System.Threading.Tasks;
+using DotNetEnv;
+
+
 class Program
 {
     private DiscordSocketClient? _client;
@@ -25,7 +28,9 @@ class Program
 
         gameRegisterStorage = new GameRegisterStorage();
 
-        string token = "MTM3NzI3NDMzMzU4MzY0MjcyNw.GS_FoI.qV_V8OH9QrKpI3Ebfl_Lk_O-B3fp4hOka6ZIR8";
+        DotNetEnv.Env.Load(); // .env 파일 로드
+
+        string token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
 
         if (string.IsNullOrWhiteSpace(token))
         {
