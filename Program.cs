@@ -27,6 +27,12 @@ class Program
 
         string token = "MTM3NzI3NDMzMzU4MzY0MjcyNw.GS_FoI.qV_V8OH9QrKpI3Ebfl_Lk_O-B3fp4hOka6ZIR8";
 
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Console.WriteLine("❌ 토큰이 비어 있습니다!");
+        }
+
+
         await _client.LoginAsync(TokenType.Bot, token);
         await _client.StartAsync();
 
