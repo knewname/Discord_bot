@@ -300,25 +300,37 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
     {
         ulong msgId = ulong.Parse(id);
         var gameRegisterStorage = Program.gameRegisterStorage;
-        GameRegisterInfo gameRegisterInfo = gameRegisterStorage.SearchGameSchedule(msgId);
-        if (date != null)
-            gameRegisterInfo.date = date;
-        if (time != null)
-            gameRegisterInfo.time = time;
+        GameRegisterInfo? gameRegisterInfo = gameRegisterStorage.SearchGameSchedule(msgId);
 
-        if (game != null)
-            gameRegisterInfo.game = game;
+        if (gameRegisterInfo != null)
+        {
+            if (date != null)
+                gameRegisterInfo.date = date;
+            if (time != null)
+                gameRegisterInfo.time = time;
 
-        if (max != null)
-            gameRegisterInfo.max = (int)max;
+            if (game != null)
+                gameRegisterInfo.game = game;
 
-        await gameRegisterStorage.SaveAsync();
+            if (max != null)
+                gameRegisterInfo.max = (int)max;
 
-        
-        // 메세지 ID 저장
-        var msg = await Context.Channel.GetMessageAsync(msgId) as IUserMessage;
-        var guild = (msg.Channel as SocketGuildChannel)?.Guild;         // 현재 채널로 서버 guild값을 가져옴
-        await gameRegisterStorage.EditGameRegisterMessage(msg, gameRegisterInfo, guild);
+            await gameRegisterStorage.SaveAsync();
+
+
+
+            // 메세지 ID 저장
+            var msg = await Context.Channel.GetMessageAsync(msgId) as IUserMessage;
+            var guild = (msg.Channel as SocketGuildChannel)?.Guild;         // 현재 채널로 서버 guild값을 가져옴
+            await gameRegisterStorage.EditGameRegisterMessage(msg, gameRegisterInfo, guild);
+
+
+            await RespondAsync("수정 완료 하였습니다.", ephemeral: true);
+        }
+        else
+        {
+            await RespondAsync("해당 ID는 존재하지 않습니다.", ephemeral: true);
+        }
 
     }
     
