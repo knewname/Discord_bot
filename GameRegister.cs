@@ -240,13 +240,6 @@ public class GameRegisterStorage
         await msg.ModifyAsync(m => { m.Embed = embed; });
     }
 
-    internal void EditGameRegisterMessage(IUserMessage msg, GameRegisterInfo info, Func<ulong, SocketGuild> getGuild)
-    {
-        throw new NotImplementedException();
-    }
 
-    internal async Task EditGameRegisterMessage(IUserMessage message, GameRegisterInfo info, ulong? guildId)
-    {
-        throw new NotImplementedException();
-    }
+    
 }

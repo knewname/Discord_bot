@@ -105,7 +105,7 @@ class Program
             GameRegisterInfo info = await gameRegisterStorage.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경 
             if (info != null)
-                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
+                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, (ulong)serverId);
 
             else if (info == null)
             {
@@ -125,14 +125,22 @@ class Program
         var user = await channel.GetUserAsync(reaction.UserId);
 
         // 서버(Guild) ID 가져오기
-        var serverId = (channel as SocketGuildChannel)?.Guild.Id;
-        if (serverId == null)
+        var guildId = (channel as SocketGuildChannel)?.Guild.Id;
+        ulong serverId = 0;
+        if (guildId.HasValue)
+        {
+            serverId = guildId.Value;
+        }
+        else
         {
             await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
         }
 
         // 예시: 특정 이모지 감지
-        if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id))
+        if (reaction.Emote.Name == "🆗"
+            && !user.IsBot
+            && gameRegisterStorage.msgIdList.Contains(message.Id)
+            && serverId != 0)
         {
             GameRegisterInfo info = await gameRegisterStorage.RemoveUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경
@@ -174,8 +182,9 @@ class Program
 
     }
     
-    public async Task EditGameRegisterMessage(IUserMessage msg, GameRegisterInfo info, SocketGuild guild)
+    public async Task EditGameRegisterMessage(IUserMessage msg, GameRegisterInfo info, ulong servetId)
     {
+        SocketGuild guild = _client.GetGuild(servetId);
         Program.gameRegisterStorage.EditGameRegisterMessage(msg, info, guild);
     }
 
