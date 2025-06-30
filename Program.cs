@@ -88,19 +88,16 @@ class Program
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
 
-        Console.WriteLine($"{user.Id}");
 
 
         // 서버(Guild) ID 가져오기
-        var guildId = (channel as SocketGuildChannel)?.Guild.Id;
-        if (guildId == null)
+        var serverId = (channel as SocketGuildChannel)?.Guild.Id;
+        if (serverId == null)
         {
             await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
         }
-        else
-        {
-            Console.Write($"{guildId}");
-        }
+
+        Console.WriteLine($"{serverId}");
 
 
         if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id))
@@ -108,8 +105,8 @@ class Program
             GameRegisterInfo info = await gameRegisterStorage.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경 
             if (info != null)
-                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
-
+                //await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
+                await EditGameRegisterMessage(message, info);
 
             else if (info == null)
             {
@@ -149,7 +146,8 @@ class Program
                     users += $"{userMention.Mention} ";
                 }
 
-                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
+                //await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
+                await EditGameRegisterMessage(message, info);
 
             }
         }
