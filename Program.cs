@@ -143,6 +143,7 @@ class Program
         foreach (ulong userId in info.users)
         {
             SocketUser userMention = _client.GetUser(userId);
+            Console.WriteLine($"{userId} + {userMention.Id}");
             users += $"{userMention.Mention} ";
         }
 
@@ -216,56 +217,61 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         // 명령어를 작성한 유저 데이터를 가져옴
         var user = Context.User;
 
-
-        // 메세지 ID를 미리 받기 위한 선 입력메세지 
-        // 게임 스케줄에 대한 고유값으로 메세지 ID값을 받기 때문에 메세지를 작성함으로 해당 ID값이 필요
-        var embed = new EmbedBuilder()
-                .WithTitle($"{game}")
-                .WithDescription($"ID : [잠시 후 결정됨]\n모집인원수 : 1/{max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
-                .WithColor(Color.Blue)
-                .Build();
-        await RespondAsync(embed: embed);
-
-        // ID를 받기 위한 작성한 메세지에 대한 정보 가져오기
-        var channel = Context.Channel as SocketTextChannel;
-        var messages = await channel.GetMessagesAsync(1).FlattenAsync();
-        var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
-        if (botMessage != null)
+        if (max > 1)
         {
-            // 메시지가 존재하면 이모지 반응 추가
-            await botMessage.AddReactionAsync(new Emoji("🆗"));
+            // 메세지 ID를 미리 받기 위한 선 입력메세지 
+            // 게임 스케줄에 대한 고유값으로 메세지 ID값을 받기 때문에 메세지를 작성함으로 해당 ID값이 필요
+            var embed = new EmbedBuilder()
+                    .WithTitle($"{game}")
+                    .WithDescription($"ID : [잠시 후 결정됨]\n모집인원수 : 1/{max}\n시간 : {date} {time}\n 참여인원 : {user.Username}")
+                    .WithColor(Color.Blue)
+                    .Build();
+            await RespondAsync(embed: embed);
 
-            // 메세지 ID 저장
-            ulong messageId = botMessage.Id;
-            var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
+            // ID를 받기 위한 작성한 메세지에 대한 정보 가져오기
+            var channel = Context.Channel as SocketTextChannel;
+            var messages = await channel.GetMessagesAsync(1).FlattenAsync();
+            var botMessage = messages.FirstOrDefault(msg => msg.Author.Id == Context.Client.CurrentUser.Id);
+            if (botMessage != null)
+            {
+                // 메시지가 존재하면 이모지 반응 추가
+                await botMessage.AddReactionAsync(new Emoji("🆗"));
 
-            // 스케쥴 고유값을 list에 add
-            gameRegisterStorage.msgIdList.Add(messageId);
+                // 메세지 ID 저장
+                ulong messageId = botMessage.Id;
+                var msg = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
 
-            // embed 포멧 실제 포멧으로 수정정
-            embed = new EmbedBuilder()
-                  .WithTitle($"{game}")
-                  .WithDescription($"ID : {messageId}\n모집인원수 : 1/{max}\n시간 : {date} {time}\n 참여인원 : {user.Mention}")
-                  .WithColor(Color.Blue)
-                  .WithFooter(footer => footer.Text = "이리악귀들")
-                  .WithTimestamp(DateTimeOffset.Now)
-                  .Build();
+                // 스케쥴 고유값을 list에 add
+                gameRegisterStorage.msgIdList.Add(messageId);
 
-            // 실제 포멧으로 수정한 데이터로 수정 
-            await msg.ModifyAsync(m => { m.Embed = embed; });
+                // embed 포멧 실제 포멧으로 수정정
+                embed = new EmbedBuilder()
+                    .WithTitle($"{game}")
+                    .WithDescription($"ID : {messageId}\n모집인원수 : 1/{max}\n시간 : {date} {time}\n 참여인원 : {user.Mention}")
+                    .WithColor(Color.Blue)
+                    .WithFooter(footer => footer.Text = "이리악귀들")
+                    .WithTimestamp(DateTimeOffset.Now)
+                    .Build();
 
-            // 예약된 스케줄을 저장
-            await gameRegisterStorage.RegisterSchedule(
-                messageId,
-                date,
-                time,
-                game,
-                user.Id,
-                max
-            );
+                // 실제 포멧으로 수정한 데이터로 수정 
+                await msg.ModifyAsync(m => { m.Embed = embed; });
+
+                // 예약된 스케줄을 저장
+                await gameRegisterStorage.RegisterSchedule(
+                    messageId,
+                    date,
+                    time,
+                    game,
+                    user.Id,
+                    max
+                );
 
 
+            }
         }
+        else
+            await RespondAsync("1명 이하는 설정하실수 없습니다.", ephemeral: true);    
+        
 
 
     }
@@ -313,10 +319,16 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 gameRegisterInfo.game = game;
 
             if (max != null)
-                gameRegisterInfo.max = (int)max;
+            {
+                if (max <= 1)
+                    await RespondAsync("1명 이하는 설정하실수 없습니다.", ephemeral: true);     
+                else if (max < gameRegisterInfo.cur)
+                    await RespondAsync("현재 참여인원보다 적은 수입니다.", ephemeral: true);            
+                else
+                    gameRegisterInfo.max = (int)max;
+            }
 
             await gameRegisterStorage.SaveAsync();
-
 
 
             // 메세지 ID 저장
