@@ -91,8 +91,13 @@ class Program
 
 
         // 서버(Guild) ID 가져오기
-        var serverId = (channel as SocketGuildChannel)?.Guild.Id;
-        if (serverId == null)
+        var guildId = (channel as SocketGuildChannel)?.Guild.Id;
+        ulong serverId = 0;
+        if (guildId.HasValue)
+        {
+            serverId = guildId.Value;
+        }
+        else
         {
             await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
         }
@@ -105,7 +110,7 @@ class Program
             GameRegisterInfo info = await gameRegisterStorage.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경 
             if (info != null)
-                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, (ulong)serverId);
+                await EditGameRegisterMessage(message, info, serverId);
 
             else if (info == null)
             {
@@ -153,7 +158,7 @@ class Program
                     users += $"{userMention.Mention} ";
                 }
 
-                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
+                await EditGameRegisterMessage(message, info, serverId);
 
             }
         }
