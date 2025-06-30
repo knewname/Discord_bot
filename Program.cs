@@ -84,6 +84,8 @@ class Program
                                         SocketReaction reaction)
     {
 
+
+        //AddRoleAsync(ulong, RequestOptions) 
         var message = await cacheableMessage.GetOrDownloadAsync();
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
@@ -304,8 +306,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             }
         }
         else
-            await RespondAsync("1명 이하는 설정하실수 없습니다.", ephemeral: true);    
-        
+            await RespondAsync("1명 이하는 설정하실수 없습니다.", ephemeral: true);
+
 
 
     }
@@ -355,9 +357,9 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             if (max != null)
             {
                 if (max <= 1)
-                    await RespondAsync("1명 이하는 설정하실수 없습니다.", ephemeral: true);     
+                    await RespondAsync("1명 이하는 설정하실수 없습니다.", ephemeral: true);
                 else if (max < gameRegisterInfo.cur)
-                    await RespondAsync("현재 참여인원보다 적은 수입니다.", ephemeral: true);            
+                    await RespondAsync("현재 참여인원보다 적은 수입니다.", ephemeral: true);
                 else
                     gameRegisterInfo.max = (int)max;
             }
@@ -378,6 +380,13 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             await RespondAsync("해당 ID는 존재하지 않습니다.", ephemeral: true);
         }
 
+    }
+
+
+
+    [SlashCommand("역할부여등록", "역할부여할 메세지, 반응, 역할을 등록합니다.")]
+    public async Task RegRole(string msgId, SocketRole role, string emoji)
+    {
     }
     
     
