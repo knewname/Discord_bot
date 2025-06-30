@@ -105,8 +105,7 @@ class Program
             GameRegisterInfo info = await gameRegisterStorage.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경 
             if (info != null)
-                //await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
-                await EditGameRegisterMessage(message, info);
+                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
 
             else if (info == null)
             {
@@ -146,8 +145,7 @@ class Program
                     users += $"{userMention.Mention} ";
                 }
 
-                //await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
-                await EditGameRegisterMessage(message, info);
+                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
 
             }
         }

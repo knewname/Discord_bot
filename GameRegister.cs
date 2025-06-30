@@ -244,4 +244,9 @@ public class GameRegisterStorage
     {
         throw new NotImplementedException();
     }
+
+    internal async Task EditGameRegisterMessage(IUserMessage message, GameRegisterInfo info, ulong? guildId)
+    {
+        throw new NotImplementedException();
+    }
 }
