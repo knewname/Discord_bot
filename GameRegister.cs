@@ -31,11 +31,10 @@ public class GameRegisterStorage
     public GameRegisterStorage(string filePath = "game_register.json")
     {
         _filePath = filePath;
-        InitScheduleList();
     }
 
     // json data list에 저장
-    public async void InitScheduleList()
+    public async Task InitScheduleList()
     {
         await LoadAsync();
         msgIdList = await LoadMsgIdList(regisrerList);
@@ -241,9 +240,8 @@ public class GameRegisterStorage
         await msg.ModifyAsync(m => { m.Embed = embed; });
     }
 
-    
-    
-
-
-
+    internal void EditGameRegisterMessage(IUserMessage msg, GameRegisterInfo info, Func<ulong, SocketGuild> getGuild)
+    {
+        throw new NotImplementedException();
+    }
 }

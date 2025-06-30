@@ -27,6 +27,8 @@ class Program
 
 
         gameRegisterStorage = new GameRegisterStorage();
+        await gameRegisterStorage.InitScheduleList(); // ← 중요!
+
 
         DotNetEnv.Env.Load(); // .env 파일 로드
 
@@ -129,7 +131,7 @@ class Program
                     users += $"{userMention.Mention} ";
                 }
 
-                await  EditGameRegisterMessage(message, info);
+                await EditGameRegisterMessage(message, info);
 
             }
         }
@@ -138,7 +140,6 @@ class Program
     // json에서 저장된 데이터 기반으로 메세지 수정 
     public async Task EditGameRegisterMessage(IUserMessage msg, GameRegisterInfo info)
     {
-
         string users = "";
         foreach (ulong userId in info.users)
         {
@@ -157,6 +158,11 @@ class Program
 
         await msg.ModifyAsync(m => { m.Embed = embed; });
 
+    }
+    
+    public async Task EditGameRegisterMessage(IUserMessage msg, GameRegisterInfo info, SocketGuild guild)
+    {
+        Program.gameRegisterStorage.EditGameRegisterMessage(msg, info, guild);
     }
 
     
