@@ -92,10 +92,14 @@ class Program
 
 
         // 서버(Guild) ID 가져오기
-        var serverId = (channel as SocketGuildChannel)?.Guild.Id;
-        if (serverId == null)
+        var guildId = (channel as SocketGuildChannel)?.Guild.Id;
+        if (guildId == null)
         {
             await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
+        }
+        else
+        {
+            Console.Write($"{guildId}");
         }
 
 
