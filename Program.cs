@@ -90,12 +90,21 @@ class Program
 
         Console.WriteLine($"{user.Id}");
 
+
+        // 서버(Guild) ID 가져오기
+        var serverId = (channel as SocketGuildChannel)?.Guild.Id;
+        if (serverId == null)
+        {
+            await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
+        }
+
+
         if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id))
         {
             GameRegisterInfo info = await gameRegisterStorage.AddUser(reaction.MessageId, reaction.UserId);
             // 정상적으로 추가 완료시 기존 메세지 변경 
             if (info != null)
-                await EditGameRegisterMessage(message, info);
+                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
 
 
             else if (info == null)
@@ -115,7 +124,12 @@ class Program
         var channel = await cacheableChannel.GetOrDownloadAsync();
         var user = await channel.GetUserAsync(reaction.UserId);
 
-        //Console.WriteLine($"❌ {reaction.UserId} 님이 {reaction.Emote.Name} 리액션을 제거했습니다.");
+        // 서버(Guild) ID 가져오기
+        var serverId = (channel as SocketGuildChannel)?.Guild.Id;
+        if (serverId == null)
+        {
+            await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
+        }
 
         // 예시: 특정 이모지 감지
         if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id))
@@ -131,7 +145,7 @@ class Program
                     users += $"{userMention.Mention} ";
                 }
 
-                await EditGameRegisterMessage(message, info);
+                await Program.gameRegisterStorage.EditGameRegisterMessage(message, info, serverId);
 
             }
         }
