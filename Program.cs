@@ -111,6 +111,7 @@ class Program
         {
             GameRegisterInfo info = gameRegisterStorage.SearchGameSchedule(reaction.MessageId);
 
+            // 리액션 리스트에 있는 인원들로 참가자 파악
             var addEmoji = new Emoji("🆗");
             var userList = await message.GetReactionUsersAsync(addEmoji, info.max).FlattenAsync();
 
@@ -157,20 +158,20 @@ class Program
             && gameRegisterStorage.msgIdList.Contains(message.Id)
             && serverId != 0)
         {
-            GameRegisterInfo info = await gameRegisterStorage.RemoveUser(reaction.MessageId, reaction.UserId);
+
+            GameRegisterInfo info = gameRegisterStorage.SearchGameSchedule(reaction.MessageId);
+
+            // 리액션 리스트에 있는 인원들로 참가자 파악
+            var addEmoji = new Emoji("🆗");
+            var userList = await message.GetReactionUsersAsync(addEmoji, info.max).FlattenAsync();
+
+            info = await gameRegisterStorage.RemoveUser(reaction.MessageId, userList);
+            
             // 정상적으로 추가 완료시 기존 메세지 변경
             if (info != null)
-            {
-                string users = "";
-                foreach (ulong userId in info.users)
-                {
-                    SocketUser userMention = _client.GetUser(userId);
-                    users += $"{userMention.Mention} ";
-                }
-
                 await EditGameRegisterMessage(message, info, serverId);
 
-            }
+            
         }
     }
 

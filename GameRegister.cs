@@ -139,6 +139,8 @@ public class GameRegisterStorage
 
     }
 
+    
+
     public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     {
         GameRegisterInfo gameRegister = SearchGameSchedule(msgId);
@@ -156,6 +158,28 @@ public class GameRegisterStorage
         // 수정된 내용 수정 후 저장
         await SaveAsync();
 
+        return gameRegister;
+
+    }
+
+    public async Task<GameRegisterInfo> RemoveUser(ulong msgId, IEnumerable<IUser> userList)
+    {
+        GameRegisterInfo gameRegister = SearchGameSchedule(msgId);
+        List<ulong> userIdList = new List<ulong>();
+
+        userIdList.Add(gameRegister.author); // 반응한 인원중에 작성자는 포함되있지 않아 따로 추가 필요
+
+        foreach (IUser user in userList)
+        {
+            // 반응 목록에 봇 제거(반응 등록을 위해 봇도 반응함)
+            // 최대인원수보다 많을시에 선착순으로 처리
+            if (!user.IsBot && userIdList.Count < gameRegister.max)
+                userIdList.Add(user.Id);
+
+        }
+
+        gameRegister.users = userIdList;
+        gameRegister.cur = userIdList.Count;
         return gameRegister;
 
     }
