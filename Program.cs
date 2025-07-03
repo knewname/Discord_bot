@@ -152,7 +152,10 @@ class Program
             await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
         }
 
-        Console.WriteLine($"{message.Id}");
+        if (user == null)
+        {
+            Console.Write("ch");
+        }
         // 예시: 특정 이모지 감지
         if (reaction.Emote.Name == "🆗"
             && !user.IsBot
