@@ -276,6 +276,8 @@ public class GameRegisterStorage
     {
         string users = "";
 
+        Console.WriteLine($"{guild.Id}");
+
         foreach (ulong userId in info.users)
         {
             SocketGuildUser user = guild.GetUser(userId);
