@@ -107,9 +107,17 @@ class Program
         Console.WriteLine($"{serverId}");
 
 
-        if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id))
+        if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id) && serverId != 0)
         {
-            GameRegisterInfo info = await gameRegisterStorage.AddUser(reaction.MessageId, reaction.UserId);
+            GameRegisterInfo info = gameRegisterStorage.SearchGameSchedule(reaction.MessageId);
+
+            var addEmoji = new Emoji("🆗");
+            var userList = await message.GetReactionUsersAsync(addEmoji, info.max).FlattenAsync();
+
+            info = await gameRegisterStorage.AddUser(reaction.MessageId, userList);
+
+            
+
             // 정상적으로 추가 완료시 기존 메세지 변경 
             if (info != null)
                 await EditGameRegisterMessage(message, info, serverId);
@@ -384,10 +392,10 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
 
-    [SlashCommand("역할부여등록", "역할부여할 메세지, 반응, 역할을 등록합니다.")]
-    public async Task RegRole(string msgId, SocketRole role, string emoji)
-    {
-    }
+    // [SlashCommand("역할부여등록", "역할부여할 메세지, 반응, 역할을 등록합니다.")]
+    // public async Task RegRole(string msgId, SocketRole role, string emoji)
+    // {
+    // }
     
     
 

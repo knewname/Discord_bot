@@ -110,6 +110,35 @@ public class GameRegisterStorage
 
     }
 
+    public async Task<GameRegisterInfo> AddUser(ulong msgId, IEnumerable<IUser> userList)
+    {
+        GameRegisterInfo gameRegister = SearchGameSchedule(msgId);
+
+        Boolean addCheck = false; // 인원수 추가 있다면 true (인원수가 초과하거나 이미 참가 인원인 경우)
+
+        foreach (IUser userId in userList)
+        {
+            // 이미 참가중이 아니거나 인원수 초과가 나지 않으며 봇이 아니여야함
+            if (!gameRegister.users.Contains(userId.Id) && gameRegister.cur < gameRegister.max && !userId.IsBot)
+            {
+                // 리액션 리스트에 있는 사람중에 없는 사람 추가
+                addCheck = true;
+                gameRegister.users.Add(userId.Id);
+                gameRegister.cur++;
+            }
+
+            await SaveAsync();
+
+        }
+
+        if (addCheck)
+            return gameRegister;
+        else
+            return null;
+  
+
+    }
+
     public async Task<GameRegisterInfo> RemoveUser(ulong msgId, ulong userId)
     {
         GameRegisterInfo gameRegister = SearchGameSchedule(msgId);
