@@ -276,11 +276,9 @@ public class GameRegisterStorage
     {
         string users = "";
 
-        Console.WriteLine($"{guild.Id}");
-
         foreach (ulong userId in info.users)
         {
-            SocketGuildUser user = guild.GetUser(userId);
+            var user = guild.GetUser(userId);
             users += user != null ? $"{user.Mention} " : $"(ID:{userId}) ";
         }
 
