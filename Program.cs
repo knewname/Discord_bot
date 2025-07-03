@@ -152,6 +152,7 @@ class Program
             await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
         }
 
+        Console.WriteLine($"{message.Id}");
         // 예시: 특정 이모지 감지
         if (reaction.Emote.Name == "🆗"
             && !user.IsBot
@@ -166,12 +167,12 @@ class Program
             var userList = await message.GetReactionUsersAsync(addEmoji, info.max).FlattenAsync();
 
             info = await gameRegisterStorage.RemoveUser(reaction.MessageId, userList);
-            
+
             // 정상적으로 추가 완료시 기존 메세지 변경
             if (info != null)
                 await EditGameRegisterMessage(message, info, serverId);
 
-            
+
         }
     }
 
