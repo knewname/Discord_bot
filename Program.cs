@@ -4,6 +4,7 @@ using Discord.Interactions;
 using System;
 using System.Threading.Tasks;
 using DotNetEnv;
+using Microsoft.VisualBasic;
 
 
 class Program
@@ -107,30 +108,14 @@ class Program
         Console.WriteLine($"{serverId}");
 
 
+        // 파티 인원 추가
         if (reaction.Emote.Name == "🆗" && !user.IsBot && gameRegisterStorage.msgIdList.Contains(message.Id) && serverId != 0)
         {
-            GameRegisterInfo info = gameRegisterStorage.SearchGameSchedule(reaction.MessageId);
-
-            // 리액션 리스트에 있는 인원들로 참가자 파악
-            var addEmoji = new Emoji("🆗");
-            var userList = await message.GetReactionUsersAsync(addEmoji, info.max).FlattenAsync();
-
-            info = await gameRegisterStorage.AddUser(reaction.MessageId, userList);
-
-            
-
-            // 정상적으로 추가 완료시 기존 메세지 변경 
-            if (info != null)
-                await EditGameRegisterMessage(message, info, serverId);
-
-            else if (info == null)
-            {
-                await message.ReplyAsync($"{user} 님은 참여하실수 없습니다.");
-                // 해당 리액션 제거
-                await message.RemoveReactionAsync(reaction.Emote, user);
-            }
+            registerUserAdd(message, user, reaction, serverId);
         }
     }
+
+    
 
     private async Task OnReactionRemovedAsync(Cacheable<IUserMessage, ulong> cacheableMessage,
                                           Cacheable<IMessageChannel, ulong> cacheableChannel,
@@ -152,28 +137,61 @@ class Program
             await message.ReplyAsync("서버 ID를 가져오지 못했습니다.");
         }
 
-        
-        // 예시: 특정 이모지 감지
+
+        // 파티 인원 취소
         if (reaction.Emote.Name == "🆗"
             && !user.IsBot
             && gameRegisterStorage.msgIdList.Contains(message.Id)
             && serverId != 0)
         {
-
-            GameRegisterInfo info = gameRegisterStorage.SearchGameSchedule(reaction.MessageId);
-
-            // 리액션 리스트에 있는 인원들로 참가자 파악
-            var addEmoji = new Emoji("🆗");
-            var userList = await message.GetReactionUsersAsync(addEmoji, info.max).FlattenAsync();
-
-            info = await gameRegisterStorage.RemoveUser(reaction.MessageId, userList);
-
-            // 정상적으로 추가 완료시 기존 메세지 변경
-            if (info != null)
-                await EditGameRegisterMessage(message, info, serverId);
-
-
+            registerUserRemove(message, reaction, serverId);
         }
+    }
+
+
+    // 파티 인원 추가 함수
+    private async void registerUserAdd(IUserMessage message, IUser user, SocketReaction reaction, ulong serverId)
+    {
+
+        GameRegisterInfo info = gameRegisterStorage.SearchGameSchedule(reaction.MessageId);
+
+        // 리액션 리스트에 있는 인원들로 참가자 파악
+        var addEmoji = new Emoji("🆗");
+        var userList = await message.GetReactionUsersAsync(addEmoji, info.max).FlattenAsync();
+
+        info = await gameRegisterStorage.AddUser(reaction.MessageId, userList);
+
+
+
+        // 정상적으로 추가 완료시 기존 메세지 변경 
+        if (info != null)
+            await EditGameRegisterMessage(message, info, serverId);
+
+        else if (info == null)
+        {
+            await message.ReplyAsync($"{user} 님은 참여하실수 없습니다.");
+            // 해당 리액션 제거
+            await message.RemoveReactionAsync(reaction.Emote, user);
+        }
+
+    }
+
+    // 파티 인원 취소 함수
+    private async void registerUserRemove(IUserMessage message, SocketReaction reaction, ulong serverId)
+    {
+
+        GameRegisterInfo info = gameRegisterStorage.SearchGameSchedule(reaction.MessageId);
+
+        // 리액션 리스트에 있는 인원들로 참가자 파악
+        var addEmoji = new Emoji("🆗");
+        var userList = await message.GetReactionUsersAsync(addEmoji, info.max).FlattenAsync();
+
+        info = await gameRegisterStorage.RemoveUser(reaction.MessageId, userList);
+
+        // 정상적으로 추가 완료시 기존 메세지 변경
+        if (info != null)
+            await EditGameRegisterMessage(message, info, serverId);
+
     }
 
     // json에서 저장된 데이터 기반으로 메세지 수정 
@@ -211,26 +229,6 @@ class Program
 
 public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 {
-    // [SlashCommand("hello", "봇이 인사합니다.")]
-    // public async Task Hello()
-    // {
-    //     await RespondAsync("부르셨나요?");
-    // }
-
-    // [SlashCommand("info", "봇 정보를 출력합니다.")]
-    // public async Task Info()
-    // {
-    //     // 출력값을 임베드박스로 표현현
-    //     var embed = new EmbedBuilder()
-    //         .WithTitle("봇 정보")
-    //         .WithDescription("이것은 예시 봇입니다.")
-    //         .WithColor(Color.Blue)
-    //         .WithFooter(footer => footer.Text = "Powered by Discord.Net")
-    //         .WithTimestamp(DateTimeOffset.Now)
-    //         .Build();
-
-    //     await RespondAsync(embed: embed);
-    // }
 
     // 기존 명령어 유지(party를 유지하여 사용자가 혼란오지 않게함)
     [SlashCommand("party", "파티원을 모집합니다.")]
