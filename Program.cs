@@ -26,6 +26,8 @@ class Program
         _client.ReactionAdded += OnReactionAddedAsync;
         _client.ReactionRemoved += OnReactionRemovedAsync;
 
+        
+
 
         gameRegisterStorage = new GameRegisterStorage();
         await gameRegisterStorage.InitScheduleList(); // ← 중요!
@@ -239,7 +241,8 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
     [SlashCommand("파티모집", "파티원을 모집합니다.")]
-    public async Task MakeParty(string date, string time, string game, int max)
+    public async Task MakeParty(string game, string date, string time, int max, string? etc = null)
+    // etc 부과로 설명이 필요한 내용
     {
         // ┌────────────────────┬─────────────────────────────────────────────┐
         // │   Slash Command    │            C# (Discord.Net) Type            │
@@ -392,11 +395,23 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
 
-    // [SlashCommand("역할부여등록", "역할부여할 메세지, 반응, 역할을 등록합니다.")]
-    // public async Task RegRole(string msgId, SocketRole role, string emoji)
-    // {
-    // }
-    
+    [SlashCommand("역할부여등록", "특정 이모지에 반응 시 역할을 부여합니다.")]
+    public async Task RegisterRole(ulong messageId, string emoji, IRole role)
+    {
+        var serverId = (Context.Channel as SocketGuildChannel)?.Guild.Id ?? 0;
+        
+        if (serverId == 0)
+        {
+            await RespondAsync("❌ 서버 ID를 확인할 수 없습니다.", ephemeral: true);
+            return;
+        }
+
+        var roleManager = new ManageRoleGrant(); // 또는 싱글톤 사용 시 외부에서 주입
+        await roleManager.RegisterRoleGrant(serverId, messageId, emoji, role.Id);
+        await RespondAsync("✅ 역할 부여 등록 완료!", ephemeral: true);
+    }
+
+        
     
 
 }
