@@ -398,7 +398,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
     [SlashCommand("역할부여등록", "특정 이모지에 반응 시 역할을 부여합니다.")]
-    public async Task RegisterRole(String messageIdStr, string emoji, IRole role)
+    public async Task RegisterRole(string messageIdStr, string emoji, IRole role)
     {
         ulong msgId = ulong.Parse(messageIdStr);
         var serverId = (Context.Channel as SocketGuildChannel)?.Guild.Id ?? 0;
