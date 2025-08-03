@@ -12,6 +12,8 @@ class Program
     private DiscordSocketClient? _client;
     private InteractionService? _interactionService;
     public static GameRegisterStorage gameRegisterStorage { get; private set; }
+    public static ManageRoleGrant roleManager = ManageRoleGrant.Instance;
+
     public static Task Main(string[] args) => new Program().MainAsync();
 
     public async Task MainAsync()
@@ -398,7 +400,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
     [SlashCommand("역할부여등록", "특정 이모지에 반응 시 역할을 부여합니다.")]
-    public async Task RegisterRole(string msgIdStr, string? emojiCode, IRole role)
+    public async Task RegisterRole(string msgIdStr, IRole role, string? emojiCode = null)
     {
         ulong msgId = ulong.Parse(msgIdStr);
         var serverId = (Context.Channel as SocketGuildChannel)?.Guild.Id ?? 0;
@@ -433,8 +435,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 return;
             }
 
-        var roleManager = new ManageRoleGrant(); // 또는 싱글톤 사용 시 외부에서 주입
-        await roleManager.RegisterRoleGrant(serverId, msgId, emojiCode, role.Id);
+        await Program.roleManager.RegisterRoleGrant(serverId, msgId, emojiCode, role.Id);
         await RespondAsync("✅ 역할 부여 등록 완료!", ephemeral: true);
     }
 

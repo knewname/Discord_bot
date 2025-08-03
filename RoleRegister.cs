@@ -15,15 +15,18 @@ public class RoleRegisterInfo
 
 public class ManageRoleGrant
 {
+    private static ManageRoleGrant? _instance;
+    public static ManageRoleGrant Instance => _instance ??= new ManageRoleGrant();
+
     private const string FilePath = "role_register.json";
     private List<RoleRegisterInfo> registerList = new();
 
-    public ManageRoleGrant()
+    // 생성자는 private으로 외부에서 직접 생성하지 못하게 함
+    private ManageRoleGrant()
     {
         LoadFromFile().Wait();
     }
 
-    // 역할 부여 정보 저장
     public async Task RegisterRoleGrant(ulong serverId, ulong msgId, string emojiCode, ulong roleId)
     {
         var entry = new RoleRegisterInfo
@@ -38,7 +41,6 @@ public class ManageRoleGrant
         await SaveToFile();
     }
 
-    // 리액션이 발생했을 때 역할 부여
     public async Task GrantRole(SocketReaction reaction, DiscordSocketClient client)
     {
         var entry = registerList.FirstOrDefault(r =>
@@ -46,8 +48,7 @@ public class ManageRoleGrant
             r.emojiCode == reaction.Emote.Name &&
             (reaction.Channel as SocketGuildChannel)?.Guild.Id == r.serverId);
 
-        if (entry == null)
-            return;
+        if (entry == null) return;
 
         var guild = client.GetGuild(entry.serverId);
         var role = guild?.GetRole(entry.roleId);
@@ -59,7 +60,6 @@ public class ManageRoleGrant
         }
     }
 
-    // 리액션 제거시 역할 제거
     public async Task RemoveRole(SocketReaction reaction, DiscordSocketClient client)
     {
         var entry = registerList.FirstOrDefault(r =>
@@ -67,8 +67,7 @@ public class ManageRoleGrant
             r.emojiCode == reaction.Emote.Name &&
             (reaction.Channel as SocketGuildChannel)?.Guild.Id == r.serverId);
 
-        if (entry == null)
-            return;
+        if (entry == null) return;
 
         var guild = client.GetGuild(entry.serverId);
         var role = guild?.GetRole(entry.roleId);
@@ -95,6 +94,7 @@ public class ManageRoleGrant
         registerList = JsonSerializer.Deserialize<List<RoleRegisterInfo>>(json) ?? new List<RoleRegisterInfo>();
     }
 }
+
 
 
 //public Task AddRolesAsync(IEnumerable<IRole> roles, RequestOptions options = null)
