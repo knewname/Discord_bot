@@ -36,6 +36,8 @@ class Program
         DotNetEnv.Env.Load(); // .env 파일 로드
 
         string token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+        Console.WriteLine($"토큰 확인: {token}");
+
 
         if (string.IsNullOrWhiteSpace(token))
         {
@@ -396,8 +398,9 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
     [SlashCommand("역할부여등록", "특정 이모지에 반응 시 역할을 부여합니다.")]
-    public async Task RegisterRole(ulong messageId, string emoji, IRole role)
+    public async Task RegisterRole(String messageIdStr, string emoji, IRole role)
     {
+        ulong msgId = ulong.Parse(messageIdStr);
         var serverId = (Context.Channel as SocketGuildChannel)?.Guild.Id ?? 0;
         
         if (serverId == 0)
@@ -407,11 +410,10 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         }
 
         var roleManager = new ManageRoleGrant(); // 또는 싱글톤 사용 시 외부에서 주입
-        await roleManager.RegisterRoleGrant(serverId, messageId, emoji, role.Id);
+        await roleManager.RegisterRoleGrant(serverId, msgId, emoji, role.Id);
         await RespondAsync("✅ 역할 부여 등록 완료!", ephemeral: true);
     }
 
-        
     
 
 }
