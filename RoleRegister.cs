@@ -38,6 +38,7 @@ public class ManageRoleGrant
         };
 
         registerList.Add(entry);
+        
         await SaveToFile();
     }
 
