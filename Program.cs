@@ -408,8 +408,10 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
         Emoji emoji;
 
 
-        if (emojiCode == null)
+        if (emojiCode == null) {
+            emojiCode = ":new:";
             emoji = new Emoji(":new:");
+        }
         else
         {
             try // code에 해당되는 이모지가 없을때 예외
@@ -422,9 +424,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             } 
         }
 
-
         await msg.AddReactionAsync(emoji);
-
 
         
         if (serverId == 0)
@@ -434,7 +434,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
             }
 
         var roleManager = new ManageRoleGrant(); // 또는 싱글톤 사용 시 외부에서 주입
-        await roleManager.RegisterRoleGrant(serverId, msgId, emoji, role.Id);
+        await roleManager.RegisterRoleGrant(serverId, msgId, emojiCode, role.Id);
         await RespondAsync("✅ 역할 부여 등록 완료!", ephemeral: true);
     }
 
