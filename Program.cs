@@ -398,16 +398,40 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
 
 
     [SlashCommand("역할부여등록", "특정 이모지에 반응 시 역할을 부여합니다.")]
-    public async Task RegisterRole(string messageIdStr, string emoji, IRole role)
+    public async Task RegisterRole(string msgIdStr, string? emojiCode, IRole role)
     {
-        ulong msgId = ulong.Parse(messageIdStr);
+        ulong msgId = ulong.Parse(msgIdStr);
         var serverId = (Context.Channel as SocketGuildChannel)?.Guild.Id ?? 0;
+
+        var msg = await Context.Channel.GetMessageAsync(msgId) as IUserMessage;
+
+        Emoji emoji;
+
+
+        if (emojiCode == null)
+            emoji = new Emoji(":new:");
+        else
+        {
+            try // code에 해당되는 이모지가 없을때 예외
+            {
+                emoji = new Emoji(emojiCode);
+            }
+            catch
+            {
+                emoji = new Emoji(":new:");
+            } 
+        }
+
+
+        await msg.AddReactionAsync(emoji);
+
+
         
         if (serverId == 0)
-        {
-            await RespondAsync("❌ 서버 ID를 확인할 수 없습니다.", ephemeral: true);
-            return;
-        }
+            {
+                await RespondAsync("❌ 서버 ID를 확인할 수 없습니다.", ephemeral: true);
+                return;
+            }
 
         var roleManager = new ManageRoleGrant(); // 또는 싱글톤 사용 시 외부에서 주입
         await roleManager.RegisterRoleGrant(serverId, msgId, emoji, role.Id);
