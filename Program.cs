@@ -12,7 +12,7 @@ class Program
     private DiscordSocketClient? _client;
     private InteractionService? _interactionService;
     public static GameRegisterStorage gameRegisterStorage { get; private set; }
-    public static ManageRoleGrant roleManager = ManageRoleGrant.Instance;
+    public static ManageRoleGrant roleRegisterStorage { get; private set; }
 
     public static Task Main(string[] args) => new Program().MainAsync();
 
@@ -33,6 +33,8 @@ class Program
 
         gameRegisterStorage = new GameRegisterStorage();
         await gameRegisterStorage.InitScheduleList(); // ← 중요!
+
+        roleRegisterStorage = ManageRoleGrant.Instance; // ✅ 싱글톤 인스턴스 사용
 
 
         DotNetEnv.Env.Load(); // .env 파일 로드
@@ -435,7 +437,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext>
                 return;
             }
 
-        await Program.roleManager.RegisterRoleGrant(serverId, msgId, emojiCode, role.Id);
+        await Program.roleRegisterStorage.RegisterRoleGrant(serverId, msgId, emojiCode, role.Id);
         await RespondAsync("✅ 역할 부여 등록 완료!", ephemeral: true);
     }
 
